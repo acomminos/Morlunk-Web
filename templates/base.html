@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Morlunk Co. - {% block title %}Page{% endblock %}</title>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/stylesheet.css"/>
+        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" />
+	    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/morlunk_common.js"></script>
+        <!-- Sharing code -->
+        <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+        <script type="text/javascript">stLight.options({publisher: "ur-b199f62a-5d6f-c9a2-3186-baebe71211c9"}); </script>
+    </head>
+    <body>
+        <div id="banner">
+            <img src="{{ STATIC_URL }}img/morlunk_logo.png" alt="logo" style="float: left"/>
+            <div class="bannertext">
+                morlunk co.
+                <div class="bannercaption">
+                    {% block caption %}Unifying exceptional experiences{% endblock %}
+                </div>
+            </div>
+
+        <!-- Begin: adBrite, Generated: 2012-05-30 14:59:03  -->
+        <script type="text/javascript">
+        var AdBrite_Title_Color = '777777';
+        var AdBrite_Text_Color = '777777';
+        var AdBrite_Background_Color = 'EEEEEE';
+        var AdBrite_Border_Color = 'DDDDDD';
+        var AdBrite_URL_Color = '4C4C4C';
+        try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
+        </script>
+        <span style="white-space:nowrap;float:right;"><script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2159540&zs=3732385f3930&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
+        <!-- End: adBrite -->
+
+            <div id="bannermenu">
+                <a class="bannerlink" href="/">BLOG</a> 
+                <a class="bannerlink" href="/page/minecraft/">MINECRAFT</a> 
+                <a class="bannerlink" href="/page/android/">ANDROID</a> 
+                <a class="bannerlink" href="/page/community/">COMMUNITY</a> 
+                <a class="bannerlink" href="/account/" style="float: right;">ACCOUNT</a>
+                {% if user.is_staff %}
+                    <a class="bannerlink" href="/admin/" style="float: right;">ADMIN</a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <a class="bannerlink" href="/account/logout/" style="float: right;">LOGOUT</a>
+                {% endif %}
+            </div>
+        </div>
+        <div id="content">
+            {% block content %}
+                There's no content here!
+            {% endblock %}
+        </div>
+    </body>

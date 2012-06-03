@@ -1,3 +1,8 @@
+# Morlunk and Django specific
+static/
+settings.py
+
+# Python ignores
 *.py[co]
 
 # Packages

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Paoso Conversion Rates{% endblock %}
+{% block caption %}Paoso Conversion Rates{% endblock %}
+{% block content %}
+
+<p>
+	<h3>How to use these values:</h3>
+	Simply go to the nearest Paoso conversion station on the Morlunk Co. Minecraft server and place your items in the chest located there. Proceed to press the button above the chest, and claim your Paosos. The quantity amount below indicated the number of items required to produce the listed sell value, necessary for inexpensive items such as coal or stone.
+</p>
+
+<div class="centerpane">
+	<center>
+	{% for item in minecraft_items %}
+		<div class="mineitem">{{ item.buy_sell_quantity }} <b>{{ item.name }}</b> for {{ item.sell_value }} {% if item.sell_value > 1 %}Paosos{% else %}Paoso{% endif %}</div>
+	{% endfor %}
+	</center>
+</div>
+
+{% endblock %}

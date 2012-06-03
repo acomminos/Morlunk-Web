@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block caption %}Official Morlunk Co. Blog{% endblock %}
+{% block content %}
+	{% autoescape off %}
+    <h1>{{ post.title }}</h1>
+    <!--<h3>{{ post.description }}</h3>-->
+    <h4>Submitted by {{ post.author }} on {{ post.post_date }}</h4>
+    <p>{{ post.body }}</p>
+    <span class='st_facebook_hcount' displayText='Facebook' style='float: right;'></span>
+	<span class='st_twitter_hcount' displayText='Tweet' style='float: right;'></span>
+    {% endautoescape %}
+{% endblock %}

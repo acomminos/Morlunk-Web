@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Account Control Panel{% endblock %}
+{% block caption %}Command your Morlunk Co. Account{% endblock %}
+{% block content %}
+	<p>
+		Welcome to the experimental Morlunk Co. control panel. Please inform Andrew/Morlunk of any inconsistencies or bugs encountered in its testing.
+	</p>
+	<div class="controlpane">
+		<div class="panebanner" style="background-image: url('{{ STATIC_URL }}img/minecraft_logo.png');"></div>
+		<p>
+			<center>
+				<h3>Account</h3>
+			</center>
+			Minecraft accounts linked to this Morlunk Account:
+			<ul>
+				{% for account in minecraft_accounts %}
+					<li>{{ account.minecraft_username }}</li>
+				{% endfor %}
+			</ul>
+			<center>
+				<input type="button" value="Link Account" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/link/'"/>
+				<h3>Information</h3>
+				<input type="button" value="Paoso Conversion Rates" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/rates/'"/>
+				<h3>Support</h3>
+				<input type="button" value="Redeem Paoso Coupon" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/redeem/'"/><br>
+				<input type="button" value="Report Grief" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/grief/'"/>
+			</center>
+		</p>
+	</div>
+        <!--
+        <div class="controlpane">
+		<div class="panebanner" style="background-image: url('{{ STATIC_URL }}img/paoman_logo.png');"></div>
+		<br>
+		<p>
+			Super Paoman is Morlunk Co's first publicly released video game, and is currently under heavy development.
+			<br><br>If you have been given an invite to the Super Paoman developer preview, you will be able to play the snapshot by pressing the following button.
+			<br><br>
+			<input type="button" value="Play Snapshot" style="float:right; font-size: 11pt;" onclick="window.location.href='/paoman/play/'"/>
+		</p>
+            </div>
+        -->
+        <!--<div class="controlpane"></div>-->
+{% endblock %}

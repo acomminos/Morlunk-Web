@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block caption %}Register for a Morlunk account{% endblock %}
+{% block content %}
+	<h1>Register for a Morlunk Co. Account</h1>
+	<div id="loginbox">
+		<form method="POST" action="/account/register/">
+			{% csrf_token %}
+			{{ form.non_field_errors }}
+			<p>
+				{{ form.username.errors }}
+				<label for="id_username">Username:</label><br>
+				{{ form.username }}
+			</p>
+			<p>
+				{{ form.password.errors }}
+				<label for="id_password">Password:</label><br>
+				{{ form.password }}
+			</p>
+			<p>
+				{{ form.email.errors }}
+				<label for="id_email">E-mail address:</label><br>
+				{{ form.email }}
+			</p>
+			<p>
+				{{ form.first_name.errors }}
+				<label for="id_first_name">First name:</label><br>
+				{{ form.first_name }}
+			</p>
+			<p>
+				{{ form.last_name.errors }}
+				<label for="id_last_name">Last name:</label><br>
+				{{ form.last_name }}
+			</p>
+			<p><input type="submit" value="Register" /></p>
+		</form>
+	</div>
+{% endblock %}

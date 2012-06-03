@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Link Minecraft Account{% endblock %}
+{% block caption %}Link Minecraft Account to Morlunk Co.{% endblock %}
+{% block content %}
+	<h1>Link Minecraft Account to Morlunk Co.</h1>
+	<div id="loginbox">
+		<form method="POST" action="/minecraft/link/">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<p><input type="submit" value="Link" /></p>
+		</form>
+	</div>
+{% endblock %}

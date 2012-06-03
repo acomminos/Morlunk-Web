@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block caption %}Log in to your Morlunk account{% endblock %}
+{% block content %}
+	<h1>Log into your Morlunk Co. account</h1>
+	<div id="loginbox">
+		<form method="POST" action="/account/login/">
+			{% csrf_token %}
+			{% if error %}
+				Error logging in.<br><br>
+			{% endif %}
+			Username:<br>
+			<input type="text" name="username" class="loginfield"/><br><br>
+			Password:<br>
+			<input type="password" name="password" class="loginfield"/><br><br>
+			<input type="submit" name="submit" value="Log in" class="loginfield"/><br><br>
+			<a href="/account/register/">No account? Register.</a>
+		</form>
+        </div>
+        <p style="float:left;margin-left:20px">
+        Registering for a Morlunk Co. account grants great benefits for prospective users of Morlunk Co. products and services. New users are instantly granted access to all free products, which may be managed from the account control panel.<br>
+
+        </p>
+{% endblock %}

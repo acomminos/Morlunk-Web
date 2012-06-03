@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Redeem Paoso Coupon{% endblock %}
+{% block caption %}Redeem Paoso Coupon{% endblock %}
+{% block content %}
+
+<h1>Redeem Paoso Coupon</h1>
+Paoso coupon redemption is best facilitated when your account is logged out of Minecraft. Failure to do so may result in loss of Paosos.<br><br>
+<div id="loginbox">
+	{% if response %}
+	<b>{{ response }}</b><br><br>
+	{% endif %}
+	<form action="/minecraft/redeem/" method="POST">
+		{% csrf_token %}
+		Please enter the key on the voucher you receieved.<br>
+		<input type="text" placeholder="XXXXXXXXXXXXXX" name="key"/><br><br>
+		<input type="submit" value="Redeem" style="font-size: 11pt;"/>
+	</form>
+</div>
+
+{% endblock %}
