@@ -26,7 +26,7 @@ class DecimalEncoder(simplejson.JSONEncoder):
         return super(DecimalEncoder, self)._iterencode(o, markers)
 
 def is_server_authorized(api_key):
-    return MinecraftServer.objects.find(api_key=api_key).count() > 0
+    return MinecraftServer.objects.filter(api_key=api_key).count() > 0
 
 def minecraft_link(request):
     # Make sure user is logged in
