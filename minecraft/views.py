@@ -9,7 +9,7 @@ from django.template import RequestContext, Template
 from django.shortcuts import render_to_response, redirect
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
-from minecraft.models import MinecraftAccount, MinecraftItem, PaosoCoupon
+from minecraft.models import MinecraftAccount, MinecraftItem, PaosoCoupon, MinecraftServer
 from minecraft.forms import MinecraftAccountForm, GriefReportForm
 import datetime
 import traceback
@@ -25,6 +25,8 @@ class DecimalEncoder(simplejson.JSONEncoder):
             return (str(o) for o in [o])
         return super(DecimalEncoder, self)._iterencode(o, markers)
 
+def is_server_authorized(api_key):
+    return MinecraftServer.objects.find(api_key=api_key).count() > 0
 
 def minecraft_link(request):
     # Make sure user is logged in
@@ -50,21 +52,25 @@ def minecraft_link(request):
 
 def minecraft_update(request):
     try:
-        minecraft_username = request.REQUEST["minecraft_username"]
-        screen_name = request.REQUEST["screen_name"]
-        banned = request.REQUEST["banned"]
-        paosos = request.REQUEST["paosos"]
+        api_key = request.REQUEST["key"]
 
-        minecraft_user = MinecraftAccount.objects.get(minecraft_username=minecraft_username) # Get user associated with account name
+        if is_server_authorized(api_key):
+            minecraft_username = request.REQUEST["minecraft_username"]
+            screen_name = request.REQUEST["screen_name"]
+            banned = request.REQUEST["banned"]
+            #paosos = request.REQUEST["paosos"] DO NOT ALLOW UPDATE OF PAOSOS WITH UPDATE, PERIOD!
 
-        minecraft_user.minecraft_username = minecraft_username
-        minecraft_user.screen_name = screen_name
-        minecraft_user.banned = banned.lower() == 'true'
-        minecraft_user.paosos = int(paosos)
+            minecraft_user = MinecraftAccount.objects.get(minecraft_username=minecraft_username) # Get user associated with account name
 
-        minecraft_user.save()
+            minecraft_user.minecraft_username = minecraft_username
+            minecraft_user.screen_name = screen_name
+            minecraft_user.banned = banned.lower() == 'true'
 
-        response = {"result": "success"}
+            minecraft_user.save()
+
+            response = {"result": "success"}
+        else:
+            response = {"result": "invalid_key"}
     except KeyError:
         response = {"result": "invalid_request"}
     except:
@@ -117,23 +123,29 @@ def minecraft_get(request):
 @require_http_methods(["GET", "POST"])
 def minecraft_give(request):
     try:
-        fromname = request.REQUEST["from"]
-        toname = request.REQUEST["to"]
-        amount = int(request.REQUEST["amount"])
 
-        fromuser = MinecraftAccount.objects.get(minecraft_username=fromname)
-        touser = MinecraftAccount.objects.get(minecraft_username=toname)
+        api_key = request.REQUEST["key"]
 
-        if fromuser.paosos < amount:
-            return HttpResponse(simplejson.dumps({"result": "insufficient_funds"}))
+        if is_server_authorized(api_key):
+            fromname = request.REQUEST["from"]
+            toname = request.REQUEST["to"]
+            amount = int(request.REQUEST["amount"])
 
-        fromuser.paosos -= amount
-        touser.paosos += amount
-        
-        fromuser.save()
-        touser.save()
+            fromuser = MinecraftAccount.objects.get(minecraft_username=fromname)
+            touser = MinecraftAccount.objects.get(minecraft_username=toname)
 
-        response = {"result": "success"}
+            if fromuser.paosos < amount:
+                return HttpResponse(simplejson.dumps({"result": "insufficient_funds"}))
+
+            fromuser.paosos -= amount
+            touser.paosos += amount
+            
+            fromuser.save()
+            touser.save()
+
+            response = {"result": "success"}
+        else:
+            response = {"result": "invalid_key"}
     except KeyError:
         response = {"result": "invalid_request"}
     except:

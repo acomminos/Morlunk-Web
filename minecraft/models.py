@@ -6,6 +6,22 @@ import string
 
 # Create your models here.
 
+class MinecraftServer(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.CharField(max_length=128)
+    api_key = models.CharField(max_length=64)
+    
+    def __unicode__(self):
+        return self.name
+
+class MinecraftServerAdmin(admin.ModelAdmin):
+    exclude = ['api_key']
+    list_display = ('name', 'description', 'api_key')
+
+    def save_model(self, request, obj, form, change):
+        obj.api_key = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(64)) # Generate 64 character alphanumeric string
+        obj.save()
+
 class DonatorLevel(models.Model):
     MINE_COLOR_CODES = (
             (0, 'Black'),
@@ -43,7 +59,7 @@ class MinecraftAccount(models.Model):
     #creation_date = models.DateField()
     banned = models.BooleanField(default=False)
     user = models.ForeignKey(User)
-    donator_level = models.ForeignKey(DonatorLevel) #default=DonatorLevel.objects.get(name='Commoner').id) # default commoner, TODO make more reliable
+    donator_level = models.ForeignKey(DonatorLevel, default=DonatorLevel.objects.get(name='Commoner').id) # default commoner, TODO make more reliable
 
     def __unicode__(self):
         return self.minecraft_username
