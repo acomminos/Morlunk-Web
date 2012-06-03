@@ -1,5 +1,5 @@
 # Morlunk and Django specific
-static/
+# static/
 settings.py
 
 # Python ignores

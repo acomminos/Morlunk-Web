@@ -1,0 +1,188 @@
+body {
+    color: #777;
+}
+
+a:link { color: #777; text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:visited { color: #777; }
+
+#banner {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 130px;
+    line-height: 90px;
+    padding: 10px;
+    background-color: #EEE;
+    z-index: 1;
+    border-bottom: 1px solid #DDD;
+    -moz-box-shadow: 0px 0px 15px #CCC;
+    -webkit-box-shadow: 0px 0px 15px #CCC;
+    box-shadow: 0px 0px 15px #CCC;
+}
+
+.bannertext {
+    position: relative;
+
+    /* Padding from logo */
+    padding-left: 15px;
+    float: left;
+
+    width: auto;
+    height: 90px;
+    line-height: 65px;
+    font-family: "Roboto-Light";
+    font-size: 48pt;
+    color: #777;
+}
+
+.bannercaption {
+    position: relative;
+
+    /* Indent */
+    padding-left: 2px;
+
+    font-family: "Roboto-Light";
+    font-size: 14pt;
+    line-height: 20px;
+    color: #999;
+}
+
+.bannerlink {
+    margin: 0px 10px;
+}
+
+#bannermenu {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    line-height: 40px;
+    padding: 0px 20px;
+
+    background-color: #F5F5F5;
+    border: 1px solid #DDD;
+
+    font-size: 14pt;
+    font-family: "Roboto-Light", "Sans", "Arial";
+}
+
+#content {
+    position: absolute;
+    top: 140px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: #F5F5F5;
+
+    padding: 25px;
+
+    font-family: "Roboto-Light", Sans, Arial;
+    font-size: 11pt;
+
+    overflow: auto;
+}
+
+#loginbox {
+    position: relative;
+    width: 270px;
+    height: auto;
+    padding: 20px;
+
+    background-color: #F1F1F1;
+
+    border: 1px solid #DDD;
+    float: left;
+}
+
+.controlpane {
+    position: relative;
+    width: 250px;
+    height: auto;
+    /*height: 50px; Starts contracted with only title showing, expands on hover */
+    float: left;
+    overflow: hidden;
+
+    padding: 20px;
+    margin: 20px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #DDD;
+}
+
+.panebanner {
+    position: relative;
+    width: 100%;
+    height: 50px;
+
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.centerpane {
+    position: relative;
+    left: 0px;
+    right: 0px;
+    min-width: 512px;
+    height: auto;
+    margin: 0px 128px 20px 128px;
+    padding: 25px;
+    
+    background-color: #F1F1F1;
+    border: 1px solid #DDD;
+}
+
+/* Minecraft Paoso Value Divs */
+
+.mineitem {
+    width: 256px;
+    height: 36px;
+    line-height: 36px;
+
+    display: inline-block;
+
+    margin: 10px;
+    padding: 20px;
+    background-color: #F5F5F5;
+    border: 1px solid #DDD;
+}
+
+input {
+    height: 30px;
+    font-family: "Roboto-Light", "Arial", sans-serif;
+    font-size: 16pt;
+    background: -moz-linear-gradient(
+        top,
+        #ffffff 0%,
+        #f3f3f3);
+    background: -webkit-gradient(
+        linear, left top, left bottom, 
+        from(#ffffff),
+        to(#f3f3f3));
+    border: 1px solid #DDD;
+}
+
+textarea {
+    width: 100%; /* Hack to make the text area appear on a second line in forms. */
+    font-family: "Roboto-Light", "Arial", sans-serif;
+    font-size: 16pt;
+    background: -moz-linear-gradient(
+        top,
+        #ffffff 0%,
+        #f3f3f3);
+    background: -webkit-gradient(
+        linear, left top, left bottom, 
+        from(#ffffff),
+        to(#f3f3f3));
+    border: 1px solid #DDD;
+}
+
+input[type="submit"] {
+    font-size: 11pt; /* Buttons will have smaller text than fields. */
+}
+
+@font-face {
+    font-family: "Roboto-Light";
+    src: url("Roboto-Light.ttf");
+}
