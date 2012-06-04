@@ -212,6 +212,14 @@ def minecraft_sell_value(request):
 
 # Stash code
 
+def minecraft_stash(request, user_name):
+    account = MinecraftAccount.objects.get(minecraft_username=user_name)
+    stash = MinecraftStash.objects.get(owner=account)
+
+    return render_to_response('stash.html',
+                              { 'stash': stash }
+                              RequestContext(request))
+
 def minecraft_stash_update(request):
     try:
         api_key = request.REQUEST["key"]
@@ -257,3 +265,5 @@ def minecraft_stash_update(request):
             response = {"result": "invalid_key"}
     except:
         response = {"result": "error"}
+
+    return HttpResponse(simplejson.dumps(response

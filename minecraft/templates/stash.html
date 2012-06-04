@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Minecraft Stash{% endblock %}
+{% block caption %}Your Minecraft Stash{% endblock %}
+{% block content %}
+<h1>CURRENTLY UNDER HEAVY DEVELOPMENT</h1>
+<ul>
+	{% for stash_item in stash.contents %}
+	<li>{{ stash_item.amount }} {{ stash_item.item.name }}</li>
+	{% endfor %}
+
+</ul>
+{% endblock %}
