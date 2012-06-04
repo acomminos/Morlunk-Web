@@ -9,7 +9,7 @@ from django.template import RequestContext, Template
 from django.shortcuts import render_to_response, redirect
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
-from minecraft.models import MinecraftAccount, MinecraftItem, PaosoCoupon, MinecraftServer
+from minecraft.models import MinecraftAccount, MinecraftItem, PaosoCoupon, MinecraftServer, MinecraftStash, MinecraftStashItem
 from minecraft.forms import MinecraftAccountForm, GriefReportForm
 import datetime
 import traceback
@@ -208,3 +208,52 @@ def minecraft_sell_value(request):
     except:
         response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response, cls=DecimalEncoder))
+
+
+# Stash code
+
+def minecraft_stash_update(request):
+    try:
+        api_key = request.REQUEST["key"]
+
+        if is_server_authorized(api_key):
+            mineuser = request.REQUEST["username"]
+
+            minecraft_account = MinecraftAccount.objects.get(minecraft_username=mineuser)
+
+            raw_json = request.raw_post_data
+            parsed_contents = simplejson.loads(raw_json)
+
+            # Clear out existing stash and its items if exists, if not create new one
+            if MinecraftStash.object.filter(owner=minecraft_account).count() > 0:
+                # Clear stash
+                stash = MinecraftStash.objects.get(owner=minecraft_account)
+                # Remove old stash items
+                MinecraftStashItem.objects.filter(stash=stash).delete()
+            else:
+                # Create new stash
+                stash = MinecraftStash.objects.create(owner=minecraft_account)
+
+            for item in parsed_contents:
+                data_value = item.data_value
+                damage_value = item.damage_value
+                amount = item.amount
+
+                # Make sure there is minecraft item in DB for it. Create item if not that'll have to be identified by Shayan.
+                if MinecraftItem.objects.filter(data_value=data_value, damage_value=damage_value).count() == 0:
+                    minecraft_item = MinecraftItem.objects.create(data_value=data_value, damage_value=damage_value)
+                    minecraft_item.save()
+                else:
+                    minecraft_item = MinecraftItem.objects.get(data_value=data_value)
+
+                # Create stash item
+                stash_item = MinecraftStashItem.objects.create(item=minecraft_item, stash=stash, amount=amount)
+                stash_item.save()
+
+            # Add new items
+            stash.save()
+            response = {"result": "success"}
+        else:
+            response = {"result": "invalid_key"}
+    except:
+        response = {"result": "error"}

@@ -71,13 +71,14 @@ class MinecraftItem(models.Model):
     class Meta:
         ordering = ['name']
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, default="Unknown")
     data_value = models.IntegerField(max_length=4)
     damage_value = models.IntegerField(max_length=4)
-    stack_size = models.IntegerField(max_length=2)
-    buy_value = models.IntegerField(max_length=7)
-    sell_value = models.IntegerField(max_length=7)
-    buy_sell_quantity = models.IntegerField(max_length=3)
+    # These values can be null for stash purposes.
+    stack_size = models.IntegerField(max_length=2, blank=True, null=True)
+    buy_value = models.IntegerField(max_length=7, blank=True, null=True)
+    sell_value = models.IntegerField(max_length=7, blank=True, null=True)
+    buy_sell_quantity = models.IntegerField(max_length=3, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
@@ -85,19 +86,21 @@ class MinecraftItem(models.Model):
 class MinecraftItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'data_value', 'damage_value', 'stack_size', 'buy_value', 'sell_value', 'buy_sell_quantity')
 
-class MinecraftStashItem(models.Model):
-    amount = models.IntegerField(max_length=2)
-    item = models.ForeignKey(MinecraftItem)
-
-    def __unicode__(self):
-        return amount+"x "+self.item.name;
-
 class MinecraftStash(models.Model):
     owner = models.OneToOneField(MinecraftAccount)
-    contents = models.ManyToManyField(MinecraftStashItem)
+    contents = models.ManyToManyField(MinecraftItem, through='MinecraftStashItem')
+    size = models.IntegerField(max_length=2, default=54)
 
     def __unicode__(self):
         return self.owner.screen_name+"'s stash"
+
+class MinecraftStashItem(models.Model):
+    amount = models.IntegerField(max_length=2)
+    item = models.ForeignKey(MinecraftItem)
+    stash = models.ForeignKey(MinecraftStash)
+
+    def __unicode__(self):
+        return self.amount+"x "+self.item.name;
 
 class GriefReport(models.Model):
     grief_submitter = models.ForeignKey(User, related_name='grief_submitter_user')
