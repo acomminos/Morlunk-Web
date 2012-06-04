@@ -222,6 +222,39 @@ def minecraft_stash(request, user_name):
                               { 'stash_items': stash_items },
                               RequestContext(request))
 
+def minecraft_stash_get(request):
+    try:
+        api_key = request.REQUEST["key"]
+
+        if is_server_authorized(api_key):
+
+            account_name = request.REQUEST["username"]
+            account = MinecraftAccount.objects.get(minecraft_username=account_name)
+            stash = MinecraftStash.objects.get(owner=account)
+
+            stash_items = MinecraftStashItem.objects.filter(stash=stash)
+
+            stash_data = { 'name': stash.name, 
+                           'size': stash.size,
+                           'items': [] }
+
+            for stash_item in stash_items:
+                item_data = { 'data_value': stash_item.item.data_value,
+                              'damage_value': stash_item.item.damage_value,
+                              'amount': stash_item.amount }
+                stash_data['items'].append(item_data)
+
+            response = {"result": "success", "stash": stash_data}
+        else:
+            response = {"result": "invalid_key"}
+    except ObjectDoesNotExist:
+        response = {"result": "no_user"}
+    except KeyError:
+        response = {"result": "invalid_request"}
+    #except:
+    #    response = {"result": "error"}
+    return HttpResponse(simplejson.dumps(response))
+
 def minecraft_stash_update(request):
     try:
         api_key = request.REQUEST["key"]

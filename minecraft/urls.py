@@ -12,4 +12,5 @@ urlpatterns = patterns('minecraft.views',
         (r'^give$', 'minecraft_give'),
         (r'^value$', 'minecraft_sell_value'),
         (r'^stash/update$', 'minecraft_stash_update'),
+        (r'^stash/get$', 'minecraft_stash_get'),
         )

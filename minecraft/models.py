@@ -87,7 +87,8 @@ class MinecraftItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'data_value', 'damage_value', 'stack_size', 'buy_value', 'sell_value', 'buy_sell_quantity')
 
 class MinecraftStash(models.Model):
-    owner = models.OneToOneField(MinecraftAccount)
+    name = models.CharField(max_length=50, default="Morlunk Co. Stash")
+    owner = models.ForeignKey(MinecraftAccount)
     contents = models.ManyToManyField(MinecraftItem, through='MinecraftStashItem')
     size = models.IntegerField(max_length=2, default=54)
 
