@@ -59,7 +59,7 @@ class MinecraftAccount(models.Model):
     #creation_date = models.DateField()
     banned = models.BooleanField(default=False)
     user = models.ForeignKey(User)
-    donator_level = models.ForeignKey(DonatorLevel, default=DonatorLevel.objects.get(name='Commoner').id) # default commoner, TODO make more reliable
+    donator_level = models.ForeignKey(DonatorLevel) # default commoner, TODO make more reliable
 
     def __unicode__(self):
         return self.minecraft_username
@@ -84,6 +84,20 @@ class MinecraftItem(models.Model):
 
 class MinecraftItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'data_value', 'damage_value', 'stack_size', 'buy_value', 'sell_value', 'buy_sell_quantity')
+
+class MinecraftStashItem(models.Model):
+    amount = models.IntegerField(max_length=2)
+    item = models.ForeignKey(MinecraftItem)
+
+    def __unicode__(self):
+        return amount+"x "+self.item.name;
+
+class MinecraftStash(models.Model):
+    owner = models.OneToOneField(MinecraftAccount)
+    contents = models.ManyToManyField(MinecraftStashItem)
+
+    def __unicode__(self):
+        return self.owner.screen_name+"'s stash"
 
 class GriefReport(models.Model):
     grief_submitter = models.ForeignKey(User, related_name='grief_submitter_user')
