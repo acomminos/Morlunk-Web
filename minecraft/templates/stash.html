@@ -4,7 +4,7 @@
 {% block content %}
 <h1>CURRENTLY UNDER HEAVY DEVELOPMENT</h1>
 <ul>
-	{% for stash_item in stash.contents %}
+	{% for stash_item in stash_items %}
 	<li>{{ stash_item.amount }} {{ stash_item.item.name }}</li>
 	{% endfor %}
 

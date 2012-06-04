@@ -216,8 +216,10 @@ def minecraft_stash(request, user_name):
     account = MinecraftAccount.objects.get(minecraft_username=user_name)
     stash = MinecraftStash.objects.get(owner=account)
 
+    stash_items = MinecraftStashItem.objects.filter(stash=stash)
+
     return render_to_response('stash.html',
-                              { 'stash': stash }
+                              { 'stash_items': stash_items },
                               RequestContext(request))
 
 def minecraft_stash_update(request):
@@ -266,4 +268,4 @@ def minecraft_stash_update(request):
     except:
         response = {"result": "error"}
 
-    return HttpResponse(simplejson.dumps(response
+    return HttpResponse(simplejson.dumps(response))

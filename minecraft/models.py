@@ -100,7 +100,7 @@ class MinecraftStashItem(models.Model):
     stash = models.ForeignKey(MinecraftStash)
 
     def __unicode__(self):
-        return self.amount+"x "+self.item.name;
+        return self.stash.owner.screen_name+"'s "+str(self.amount)+" "+self.item.name;
 
 class GriefReport(models.Model):
     grief_submitter = models.ForeignKey(User, related_name='grief_submitter_user')

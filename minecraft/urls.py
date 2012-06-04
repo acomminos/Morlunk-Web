@@ -5,7 +5,7 @@ urlpatterns = patterns('minecraft.views',
         (r'^grief/', 'minecraft_grief'),
         (r'^rates/', 'minecraft_rates'),
         (r'^redeem/', 'minecraft_paoso_redeem'),
-        (r'^stash/(?P<user_name>.*)/', 'minecraft_stash'),
+        (r'^stash/(?P<user_name>.*)/$', 'minecraft_stash'),
         
 		(r'^update$', 'minecraft_update'),
         (r'^account$', 'minecraft_get'),

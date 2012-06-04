@@ -15,7 +15,7 @@
 			Minecraft accounts linked to this Morlunk Account:
 			<ul>
 				{% for account in minecraft_accounts %}
-					<li>{{ account.minecraft_username }}</li>
+					<li><a href="/minecraft/stash/{{ account.minecraft_username }}/">{{ account.minecraft_username }}</a></li>
 				{% endfor %}
 			</ul>
 			<center>
