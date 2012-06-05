@@ -75,10 +75,10 @@ class MinecraftItem(models.Model):
     data_value = models.IntegerField(max_length=4)
     damage_value = models.IntegerField(max_length=4)
     # These values can be null for stash purposes.
-    stack_size = models.IntegerField(max_length=2, blank=True, null=True)
-    buy_value = models.IntegerField(max_length=7, blank=True, null=True)
-    sell_value = models.IntegerField(max_length=7, blank=True, null=True)
-    buy_sell_quantity = models.IntegerField(max_length=3, blank=True, null=True)
+    stack_size = models.IntegerField(max_length=2, blank=True, null=True, default=64)
+    buy_value = models.IntegerField(max_length=7, blank=True, null=True, default=0)
+    sell_value = models.IntegerField(max_length=7, blank=True, null=True, default=0)
+    buy_sell_quantity = models.IntegerField(max_length=3, blank=True, null=True, default=0)
 
     def __unicode__(self):
         return self.name

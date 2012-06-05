@@ -9,6 +9,7 @@ from django.template import RequestContext, Template
 from django.shortcuts import render_to_response, redirect
 from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.decorators.csrf import csrf_exempt
 from minecraft.models import MinecraftAccount, MinecraftItem, PaosoCoupon, MinecraftServer, MinecraftStash, MinecraftStashItem
 from minecraft.forms import MinecraftAccountForm, GriefReportForm
 import datetime
@@ -222,6 +223,7 @@ def minecraft_stash(request, user_name):
                               { 'stash_items': stash_items },
                               RequestContext(request))
 
+@require_http_methods(["GET", "POST"])
 def minecraft_stash_get(request):
     try:
         api_key = request.REQUEST["key"]
@@ -230,7 +232,13 @@ def minecraft_stash_get(request):
 
             account_name = request.REQUEST["username"]
             account = MinecraftAccount.objects.get(minecraft_username=account_name)
-            stash = MinecraftStash.objects.get(owner=account)
+
+            # Create stash if not present
+            if MinecraftStash.objects.filter(owner=account).count() == 0:
+                stash = MinecraftStash.objects.create(owner=account)
+                stash.save()
+            else:
+                stash = MinecraftStash.objects.get(owner=account)
 
             stash_items = MinecraftStashItem.objects.filter(stash=stash)
 
@@ -251,10 +259,12 @@ def minecraft_stash_get(request):
         response = {"result": "no_user"}
     except KeyError:
         response = {"result": "invalid_request"}
-    #except:
-    #    response = {"result": "error"}
+    except:
+        response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response))
 
+# Disable CSRF so we don't have any complications.
+@csrf_exempt
 def minecraft_stash_update(request):
     try:
         api_key = request.REQUEST["key"]
@@ -264,11 +274,11 @@ def minecraft_stash_update(request):
 
             minecraft_account = MinecraftAccount.objects.get(minecraft_username=mineuser)
 
-            raw_json = request.raw_post_data
-            parsed_contents = simplejson.loads(raw_json)
+            item_data = request.REQUEST["items"]
+            parsed_contents = simplejson.loads(item_data)
 
             # Clear out existing stash and its items if exists, if not create new one
-            if MinecraftStash.object.filter(owner=minecraft_account).count() > 0:
+            if MinecraftStash.objects.filter(owner=minecraft_account).count() > 0:
                 # Clear stash
                 stash = MinecraftStash.objects.get(owner=minecraft_account)
                 # Remove old stash items
@@ -278,9 +288,9 @@ def minecraft_stash_update(request):
                 stash = MinecraftStash.objects.create(owner=minecraft_account)
 
             for item in parsed_contents:
-                data_value = item.data_value
-                damage_value = item.damage_value
-                amount = item.amount
+                data_value = item['data_value']
+                damage_value = item['damage_value']
+                amount = item['amount']
 
                 # Make sure there is minecraft item in DB for it. Create item if not that'll have to be identified by Shayan.
                 if MinecraftItem.objects.filter(data_value=data_value, damage_value=damage_value).count() == 0:
@@ -298,7 +308,9 @@ def minecraft_stash_update(request):
             response = {"result": "success"}
         else:
             response = {"result": "invalid_key"}
-    except:
-        response = {"result": "error"}
+    except KeyError:
+        response = {"result": "invalid_request"}
+    #except:
+    #    response = {"result": "error"}
 
     return HttpResponse(simplejson.dumps(response))
