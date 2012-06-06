@@ -298,7 +298,7 @@ def minecraft_stash_update(request):
                 elif MinecraftItem.objects.filter(data_value=data_value).count() > 0:
                     minecraft_item = MinecraftItem.objects.get(data_value=data_value)
                 else: # No item exists for this data value
-                    minecraft_item = MinecraftItem.objects.create(data_value=data_value, damage_value=damage_value)
+                    minecraft_item = MinecraftItem.objects.create(data_value=data_value, damage_value=0)
                     minecraft_item.save()
 
                 # Create stash item
