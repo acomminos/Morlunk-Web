@@ -248,7 +248,7 @@ def minecraft_stash_get(request):
 
             for stash_item in stash_items:
                 item_data = { 'data_value': stash_item.item.data_value,
-                              'damage_value': stash_item.item.damage_value,
+                              'damage_value': stash_item.damage_value, # use stash item's item value
                               'amount': stash_item.amount }
                 stash_data['items'].append(item_data)
 
@@ -292,15 +292,17 @@ def minecraft_stash_update(request):
                 damage_value = item['damage_value']
                 amount = item['amount']
 
-                # Make sure there is minecraft item in DB for it. Create item if not that'll have to be identified by Shayan.
-                if MinecraftItem.objects.filter(data_value=data_value, damage_value=damage_value).count() == 0:
+                # Make sure there is minecraft item with its data_value in DB for it. Create item if not that'll have to be identified by Shayan. Do NOT create for individual damage values.
+                if MinecraftItem.objects.filter(data_value=data_value, damage_value=damage_value).count() > 0:
+                    minecraft_item = MinecraftItem.objects.get(data_value=data_value, damage_value=damage_value)
+                elif MinecraftItem.objects.filter(data_value=data_value).count() > 0:
+                    minecraft_item = MinecraftItem.objects.get(data_value=data_value)
+                else: # No item exists for this data value
                     minecraft_item = MinecraftItem.objects.create(data_value=data_value, damage_value=damage_value)
                     minecraft_item.save()
-                else:
-                    minecraft_item = MinecraftItem.objects.get(data_value=data_value)
 
                 # Create stash item
-                stash_item = MinecraftStashItem.objects.create(item=minecraft_item, stash=stash, amount=amount)
+                stash_item = MinecraftStashItem.objects.create(item=minecraft_item, stash=stash, amount=amount, damage_value=damage_value)
                 stash_item.save()
 
             # Add new items

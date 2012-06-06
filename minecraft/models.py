@@ -98,6 +98,7 @@ class MinecraftStash(models.Model):
 class MinecraftStashItem(models.Model):
     amount = models.IntegerField(max_length=2)
     item = models.ForeignKey(MinecraftItem)
+    damage_value = models.IntegerField(max_length=4)
     stash = models.ForeignKey(MinecraftStash)
 
     def __unicode__(self):
