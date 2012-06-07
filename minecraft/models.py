@@ -81,7 +81,7 @@ class MinecraftItem(models.Model):
     buy_sell_quantity = models.IntegerField(max_length=3, blank=True, null=True, default=0)
 
     def __unicode__(self):
-        return self.name
+        return self.name+" ("+str(self.data_value)+","+str(self.damage_value)+")"
 
 class MinecraftItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'data_value', 'damage_value', 'stack_size', 'buy_value', 'sell_value', 'buy_sell_quantity')
@@ -102,7 +102,7 @@ class MinecraftStashItem(models.Model):
     stash = models.ForeignKey(MinecraftStash)
 
     def __unicode__(self):
-        return self.stash.owner.screen_name+"'s "+str(self.amount)+" "+self.item.name;
+        return self.stash.owner.screen_name+"'s "+str(self.amount)+" "+self.item.__unicode__()
 
 class GriefReport(models.Model):
     grief_submitter = models.ForeignKey(User, related_name='grief_submitter_user')

@@ -4,6 +4,7 @@ urlpatterns = patterns('minecraft.views',
         (r'^link/', 'minecraft_link'),
         (r'^grief/', 'minecraft_grief'),
         (r'^rates/', 'minecraft_rates'),
+        (r'^store/', 'minecraft_store'),
         (r'^redeem/', 'minecraft_paoso_redeem'),
         (r'^stash/(?P<user_name>.*)/$', 'minecraft_stash'),
         

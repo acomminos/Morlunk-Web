@@ -155,7 +155,35 @@ def minecraft_give(request):
 
 def minecraft_rates(request):
     return render_to_response('rates.html',
-                                { 'minecraft_items': MinecraftItem.objects.all() },
+                                { 'minecraft_items': MinecraftItem.objects.filter(sell_value__gt=0) },
+                                RequestContext(request))
+
+def minecraft_store(request):
+    if request.user.is_authenticated is False:
+        return HttpResponse(status=403)
+
+    user = request.user
+    minecraft_account = MinecraftAccount.objects.get(user=user)
+
+    response = ""
+    if request.POST:
+        # TODO except errors
+        item_id = int(request.POST['item'])
+        item = MinecraftItem.objects.get(id=item_id)
+        cost = item.buy_value
+        if minecraft_account.paosos >= cost:
+            minecraft_account.paosos -= cost
+            minecraft_account.save()
+            stash = MinecraftStash.objects.get(owner=minecraft_account)
+            stash_item = MinecraftStashItem.objects.create(item=item, stash=stash, amount=item.buy_sell_quantity, damage_value=item.damage_value)
+            stash_item.save()
+            response = "Success!"
+        else:
+            response = "Not enough Paosos!"
+    return render_to_response('store.html',
+                                { 'minecraft_account': minecraft_account,
+                                  'minecraft_items': MinecraftItem.objects.filter(buy_value__gt=0),
+                                  'response': response },
                                 RequestContext(request))
 
 def minecraft_paoso_redeem(request):

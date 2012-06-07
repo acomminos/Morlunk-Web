@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Minecraft Store{% endblock %}
+{% block caption %}MineNow- 290 bucks!{% endblock %}
+{% block content %}
+<div class="centerpane">
+	<h1>Morlunk Co. Paoso Store</h1>
+	Redeem your paosos for in-game items! Remember to recycle your items by using the Morlunk Co. Paoso Converter later.<br><br>
+	Current Paoso balance: <b>{{ minecraft_account.paosos }}</b> Paosos<br><br>
+	{% if response %}
+	<b>{{ response }}</b><br><br>
+	{% endif %}
+	<center>
+	{% for item in minecraft_items %}
+		<div class="mineitem buy">
+			<b>{{ item.name }}</b>
+			<form action="/minecraft/store/" method="POST">
+				{% csrf_token %}
+				<input type="hidden" name="item" id="item" value="{{ item.id }}"/>
+				<select name="amount"> <!-- Heh, this isn't considered at all currently. -->
+					<option>{{ item.buy_sell_quantity }} for {{ item.buy_value }} paosos</option>
+				</select><br>
+				<input type="submit" value="Buy Now"/>
+			</form>
+		</div>
+	{% endfor %}
+	</center>
+</div>
+{% endblock %}

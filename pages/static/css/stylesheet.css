@@ -148,6 +148,11 @@ a:visited { color: #777; }
     border: 1px solid #DDD;
 }
 
+.mineitem.buy {
+    height: auto;
+    line-height: auto;
+}
+
 input {
     height: 30px;
     font-family: "Roboto-Light", "Arial", sans-serif;
