@@ -72,6 +72,7 @@ class MinecraftItem(models.Model):
         ordering = ['name']
 
     name = models.CharField(max_length=50, default="Unknown")
+    icon = models.ImageField(upload_to="minecraft_icons/", blank=True)
     data_value = models.IntegerField(max_length=4)
     damage_value = models.IntegerField(max_length=4)
     # These values can be null for stash purposes.

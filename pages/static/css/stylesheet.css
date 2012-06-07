@@ -20,6 +20,7 @@ a:visited { color: #777; }
     -moz-box-shadow: 0px 0px 15px #CCC;
     -webkit-box-shadow: 0px 0px 15px #CCC;
     box-shadow: 0px 0px 15px #CCC;
+    overflow: hidden;
 }
 
 .bannertext {

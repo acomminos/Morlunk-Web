@@ -160,7 +160,7 @@ def minecraft_rates(request):
 
 def minecraft_store(request):
     if request.user.is_authenticated is False:
-        return HttpResponse(status=403)
+        return redirect("/account/")
 
     user = request.user
     minecraft_account = MinecraftAccount.objects.get(user=user)

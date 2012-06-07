@@ -12,6 +12,7 @@
 	<center>
 	{% for item in minecraft_items %}
 		<div class="mineitem buy">
+			<div style="width: 64px; height: 64px; background-image: url('{{ MEDIA_URL }}{{ item.icon }}'); background-size: 64px auto; background-position: center; background-repeat: no-repeat;"></div> <!-- TODO MAKE THIS ITS OWN CLASS -->
 			<b>{{ item.name }}</b>
 			<form action="/minecraft/store/" method="POST">
 				{% csrf_token %}
