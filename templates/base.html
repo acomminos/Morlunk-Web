@@ -38,13 +38,15 @@
                 <a class="bannerlink" href="/page/minecraft/">MINECRAFT</a> 
                 <a class="bannerlink" href="/page/android/">ANDROID</a> 
                 <a class="bannerlink" href="/page/community/">COMMUNITY</a> 
-                <a class="bannerlink" href="/account/" style="float: right;">ACCOUNT</a>
-                {% if user.is_staff %}
-                    <a class="bannerlink" href="/admin/" style="float: right;">ADMIN</a>
-                {% endif %}
-                {% if user.is_authenticated %}
-                    <a class="bannerlink" href="/account/logout/" style="float: right;">LOGOUT</a>
-                {% endif %}
+                <div style="position: absolute; top: 0px; right: 0px;"> <!-- We create a div for right-aligning menu options because float:right doesn't render properly on FF13 and some other browsers. -->
+                    <a class="bannerlink" href="/account/">ACCOUNT</a>
+                    {% if user.is_staff %}
+                      <a class="bannerlink" href="/admin/">ADMIN</a>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <a class="bannerlink" href="/account/logout/">LOGOUT</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
         <div id="content">
