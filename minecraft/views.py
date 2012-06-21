@@ -85,7 +85,7 @@ def minecraft_update(request):
 def minecraft_grief(request):
     # Make sure user is logged in
     if request.user.is_authenticated() is False:
-        return HttpResponse(status=403)
+        return redirect("/account/")
 
     if request.method == 'POST':
         form = GriefReportForm(request.POST)
