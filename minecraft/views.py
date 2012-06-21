@@ -32,7 +32,11 @@ def is_server_authorized(api_key):
 def minecraft_link(request):
     # Make sure user is logged in
     if request.user.is_authenticated() is False:
-        return HttpResponse(status=403)
+        return redirect("/account/login/")
+
+    # If user already has minecraft account, go away.
+    if MinecraftAccount.objects.filter(user=request.user).count() != 0:
+        return redirect("/account/")
 
     if request.method == 'POST':
         form = MinecraftAccountForm(request.POST)
@@ -163,6 +167,10 @@ def minecraft_store(request):
         return redirect("/account/")
 
     user = request.user
+
+    if MinecraftAccount.objects.filter(user=user).count() == 0:
+        return redirect("/minecraft/link/")
+
     minecraft_account = MinecraftAccount.objects.get(user=user)
 
     response = ""

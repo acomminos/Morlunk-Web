@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"damag",
+				"damage_value"
+			],
+			[
 				"minecraft",
 				"minecraft_account"
 			],
@@ -27,7 +31,7 @@
 			"file": "minecraft/urls.py",
 			"settings":
 			{
-				"buffer_size": 620,
+				"buffer_size": 661,
 				"line_ending": "Unix"
 			}
 		},
@@ -35,7 +39,15 @@
 			"file": "minecraft/views.py",
 			"settings":
 			{
-				"buffer_size": 12705,
+				"buffer_size": 14264,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "minecraft/templates/store.html",
+			"settings":
+			{
+				"buffer_size": 1237,
 				"line_ending": "Unix"
 			}
 		},
@@ -43,15 +55,31 @@
 			"file": "minecraft/models.py",
 			"settings":
 			{
-				"buffer_size": 4960,
+				"buffer_size": 5149,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "minecraft/tests.py",
+			"file": "pages/static/css/stylesheet.css",
 			"settings":
 			{
-				"buffer_size": 383,
+				"buffer_size": 3536,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "pages/views.py",
+			"settings":
+			{
+				"buffer_size": 550,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "templates/control_panel.html",
+			"settings":
+			{
+				"buffer_size": 2219,
 				"line_ending": "Unix"
 			}
 		}
@@ -80,6 +108,8 @@
 	},
 	"file_history":
 	[
+		"/home/andrew/Development/Projects/Morlunk-Web/pages/static/css/._.DS_Store",
+		"/home/andrew/Development/Projects/Morlunk-Web/minecraft/tests.py",
 		"/home/andrew/Development/Projects/Morlunk-Web/minecraft/models.py",
 		"/home/andrew/Development/Projects/Morlunk-Web/pages/static/css/stylesheet.css",
 		"/home/andrew/Development/Projects/Morlunk-Web/templates/base.html",
@@ -142,7 +172,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -150,15 +180,15 @@
 					"file": "minecraft/urls.py",
 					"settings":
 					{
-						"buffer_size": 620,
+						"buffer_size": 661,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								606,
-								606
+								420,
+								420
 							]
 						],
 						"settings":
@@ -178,15 +208,15 @@
 					"file": "minecraft/views.py",
 					"settings":
 					{
-						"buffer_size": 12705,
+						"buffer_size": 14264,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7503,
-								7430
+								6684,
+								6684
 							]
 						],
 						"settings":
@@ -196,25 +226,52 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2989.0,
+						"translation.y": 2237.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "minecraft/models.py",
+					"file": "minecraft/templates/store.html",
 					"settings":
 					{
-						"buffer_size": 4960,
+						"buffer_size": 1237,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2612,
-								2612
+								776,
+								776
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Syntaxes/HTML (Django).tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "minecraft/models.py",
+					"settings":
+					{
+						"buffer_size": 5149,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2442,
+								2442
 							]
 						],
 						"settings":
@@ -224,30 +281,85 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1122.0,
+						"translation.y": 574.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "minecraft/tests.py",
+					"buffer": 4,
+					"file": "pages/static/css/stylesheet.css",
 					"settings":
 					{
-						"buffer_size": 383,
+						"buffer_size": 3536,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								383,
-								219
+								499,
+								499
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 51.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "pages/views.py",
+					"settings":
+					{
+						"buffer_size": 550,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Syntaxes/Python Django.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "templates/control_panel.html",
+					"settings":
+					{
+						"buffer_size": 2219,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								441,
+								441
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Syntaxes/HTML (Django).tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,

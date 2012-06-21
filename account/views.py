@@ -16,12 +16,14 @@ from minecraft.models import MinecraftAccount
 def control_panel(request):
     # Make sure user is authenticated
     if request.user.is_authenticated():
-        # Get linked minecraft accounts
-        minecraft_accounts = MinecraftAccount.objects.filter(user=request.user)
+        # Get linked minecraft account if applicable
+        minecraft_account = None
+        if MinecraftAccount.objects.filter(user=request.user).count() > 0:
+            minecraft_account = MinecraftAccount.objects.get(user=request.user)
         # Display panel
         return render_to_response('control_panel.html',
                                   { 'user': request.user,
-                                    'minecraft_accounts': minecraft_accounts },
+                                    'minecraft_account': minecraft_account },
                                   RequestContext(request))
     else:
         # Go to login page

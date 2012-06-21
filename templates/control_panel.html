@@ -11,21 +11,18 @@
 		<p>
 			<center>
 				<h3>Account</h3>
-			</center>
-			Minecraft accounts linked to this Morlunk Account:
-			<ul>
-				{% for account in minecraft_accounts %}
-					<li><a href="/minecraft/stash/{{ account.minecraft_username }}/">{{ account.minecraft_username }}</a></li>
-				{% endfor %}
-			</ul>
-			<center>
-				<input type="button" value="Link Account" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/link/'"/>
+			{% if minecraft_account %}
+				Minecraft account linked to this Morlunk Account:
+				<h2><a href="/minecraft/stash/{{ minecraft_account.minecraft_username }}/">{{ minecraft_account.minecraft_username }}</a></h2>
 				<h3>Shop</h3>
 				<input type="button" value="Morlunk Co. Store" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/store/'"/>
 				<input type="button" value="Paoso Conversion Rates" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/rates/'"/>
 				<h3>Support</h3>
 				<input type="button" value="Redeem Paoso Coupon" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/redeem/'"/><br>
 				<input type="button" value="Report Grief" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/grief/'"/>
+			{% else %}
+				<input type="button" value="Link to Minecraft" style="font-size: 11pt; width: 250px;" onclick="window.location.href='/minecraft/link/'"/>
+			{% endif %}
 			</center>
 		</p>
 	</div>
