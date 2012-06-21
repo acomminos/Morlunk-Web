@@ -59,7 +59,7 @@ class MinecraftAccount(models.Model):
     #creation_date = models.DateField()
     banned = models.BooleanField(default=False)
     user = models.ForeignKey(User)
-    donator_level = models.ForeignKey(DonatorLevel) # default commoner, TODO make more reliable
+    donator_level = models.ForeignKey(DonatorLevel, default=1) # default is 1, commoner- TODO make more reliable
 
     def __unicode__(self):
         return self.minecraft_username
