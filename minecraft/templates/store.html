@@ -13,14 +13,11 @@
 	{% for item in minecraft_items %}
 		<div class="mineitem buy">
 			<div style="width: 64px; height: 64px; background-image: url('{{ MEDIA_URL }}{{ item.icon }}'); background-size: 64px auto; background-position: center; background-repeat: no-repeat;"></div> <!-- TODO MAKE THIS ITS OWN CLASS -->
-			<b>{{ item.name }}</b>
-			<form action="/minecraft/store/" method="POST">
-				{% csrf_token %}
-				<input type="hidden" name="item" id="item" value="{{ item.id }}"/>
+			<b>{{ item.name }}</b><br>
 				<select name="amount"> <!-- Heh, this isn't considered at all currently. -->
 					<option>{{ item.buy_sell_quantity }} for {{ item.buy_value }} paosos</option>
 				</select><br>
-				<input type="submit" value="Buy Now"/>
+				<button onclick="buyItem({{ item.id }});">Buy Now</button>
 			</form>
 		</div>
 	{% endfor %}

@@ -22,7 +22,7 @@ INVALID_REQUEST_RESPONSE = "invalid_request"
 INVALID_KEY_RESPONSE = "invalid_key"
 NO_USER_RESPONSE = "no_user"
 SUCCESS_RESPONSE = "success"
-ERROR_MESSAGE_RESPONSE = "error"
+ERROR_RESPONSE = "error"
 
 # Utility methods
 
@@ -100,9 +100,9 @@ def minecraft_update(request):
         else:
             response = {"result": INVALID_KEY_RESPONSE}
     except KeyError:
-        response = {"result": INVALID_REQUEST_RESPNSE}
+        response = {"result": INVALID_REQUEST_RESPONSE}
     except:
-        response = {"result": "error"}
+        response = {"result": ERROR_RESPONSE}
     return HttpResponse(simplejson.dumps(response))
 
 def minecraft_grief(request):
@@ -143,9 +143,9 @@ def minecraft_get(request):
         else:
             response = {"result": NO_USER_RESPONSE}
     except KeyError:
-        response = {"result": INVALID_REQUEST_RESPNSE}
+        response = {"result": INVALID_REQUEST_RESPONSE}
     except:
-        response = {"result": "error"}
+        response = {"result": ERROR_RESPONSE}
     return HttpResponse(simplejson.dumps(response))
 
 @require_http_methods(["GET", "POST"])
@@ -175,9 +175,9 @@ def minecraft_give(request):
         else:
             response = {"result": INVALID_KEY_RESPONSE}
     except KeyError:
-        response = {"result": INVALID_REQUEST_RESPNSE}
+        response = {"result": INVALID_REQUEST_RESPONSE}
     except:
-        response = {"result": "error"}
+        response = {"result": ERROR_RESPONSE}
     return HttpResponse(simplejson.dumps(response))
 
 def minecraft_rates(request):
@@ -196,26 +196,36 @@ def minecraft_store(request):
 
     minecraft_account = MinecraftAccount.objects.get(user=user)
 
-    response = ""
-    if request.POST:
-        # TODO except errors
-        item_id = int(request.POST['item'])
-        item = MinecraftItem.objects.get(id=item_id)
-        cost = item.buy_value
-        if minecraft_account.paosos >= cost:
-            minecraft_account.paosos -= cost
-            minecraft_account.save()
-            stash = MinecraftStash.objects.get(owner=minecraft_account)
-            stash_item = MinecraftStashItem.objects.create(item=item, stash=stash, amount=item.buy_sell_quantity, damage_value=item.damage_value)
-            stash_item.save()
-            response = "Success!"
-        else:
-            response = "Not enough Paosos!"
     return render_to_response('store.html',
                                 { 'minecraft_account': minecraft_account,
-                                  'minecraft_items': MinecraftItem.objects.filter(buy_value__gt=0),
-                                  'response': response },
+                                  'minecraft_items': MinecraftItem.objects.filter(buy_value__gt=0)},
                                 RequestContext(request))
+
+def minecraft_buy(request):
+    if request.user.is_authenticated is False:
+        return HttpResponse(simplejson.dumps({'result': INVALID_REQUEST_RESPONSE}))
+
+    user = request.user
+
+    if MinecraftAccount.objects.filter(user=user).count() == 0:
+        return HttpResponse(simplejson.dumps({'result': INVALID_REQUEST_RESPONSE}))
+
+    minecraft_account = MinecraftAccount.objects.get(user=user)
+
+    # TODO except errors
+    item_id = int(request.GET['item'])
+    item = MinecraftItem.objects.get(id=item_id)
+    cost = item.buy_value
+    if minecraft_account.paosos >= cost:
+        minecraft_account.paosos -= cost
+        minecraft_account.save()
+        stash = get_minecraft_stash(minecraft_account)
+        stash_item = MinecraftStashItem.objects.create(item=item, stash=stash, amount=item.buy_sell_quantity, damage_value=item.damage_value)
+        stash_item.save()
+        response = SUCCESS_RESPONSE
+    else:
+        response = "insufficient_funds"
+    return HttpResponse(simplejson.dumps({'result': response}))
 
 def minecraft_paoso_redeem(request):
     response = ""
@@ -264,9 +274,9 @@ def minecraft_sell_value(request):
     except ObjectDoesNotExist:
         response = {"result": "item_not_found"}
     except KeyError:
-        response = {"result": INVALID_REQUEST_RESPNSE}
+        response = {"result": INVALID_REQUEST_RESPONSE}
     except:
-        response = {"result": "error"}
+        response = {"result": ERROR_RESPONSE}
     return HttpResponse(simplejson.dumps(response, cls=DecimalEncoder))
 
 
@@ -313,9 +323,9 @@ def minecraft_stash_get(request):
     except ObjectDoesNotExist:
         response = {"result": NO_USER_RESPONSE}
     except KeyError:
-        response = {"result": INVALID_REQUEST_RESPNSE}
+        response = {"result": INVALID_REQUEST_RESPONSE}
     except:
-        response = {"result": "error"}
+        response = {"result": ERROR_RESPONSE}
     return HttpResponse(simplejson.dumps(response))
 
 # Disable CSRF so we don't have any complications.
@@ -361,8 +371,8 @@ def minecraft_stash_update(request):
         else:
             response = {"result": INVALID_KEY_RESPONSE}
     except KeyError:
-        response = {"result": INVALID_REQUEST_RESPNSE}
+        response = {"result": INVALID_REQUEST_RESPONSE}
     except:
-        response = {"result": "error"}
+        response = {"result": ERROR_RESPONSE}
 
     return HttpResponse(simplejson.dumps(response))

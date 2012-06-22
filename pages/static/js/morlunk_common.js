@@ -19,3 +19,18 @@ $(document).ready(function() {
 	});
 */
 });
+
+function buyItem(identifier) {
+    $.get("/minecraft/store/buy/", { "item": identifier })
+    .success(function(data) {
+    	var response = jQuery.parseJSON(data)
+        if(response.result == "success") {
+            $().toastmessage('showSuccessToast', "Success! Your item has been sent to your stash.");
+        } else if(response.result == "insufficient_funds") {
+            $().toastmessage('showWarningToast', "You need more Paosos to purchase this item!");
+        } else {
+            $().toastmessage('showErrorToast', "An unexpected error occurred when purchasing this item!")
+        }
+    });
+
+}
