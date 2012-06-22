@@ -16,6 +16,32 @@ import datetime
 import traceback
 from decimal import Decimal
 
+# Constants
+
+INVALID_REQUEST_RESPONSE = "invalid_request"
+INVALID_KEY_RESPONSE = "invalid_key"
+NO_USER_RESPONSE = "no_user"
+SUCCESS_RESPONSE = "success"
+ERROR_MESSAGE_RESPONSE = "error"
+
+# Utility methods
+
+def get_minecraft_stash(account):
+    """Obtains the passed minecraft account's minecraft stash or creates an empty one."""
+    if MinecraftStash.objects.filter(owner=account).count() == 0:
+        # Create a stash.
+        stash = MinecraftStash.objects.create(owner=account)
+        stash.save()
+    else:
+        # Retrieve existing stash.
+        stash = MinecraftStash.objects.get(owner=account)
+    return stash
+
+def is_server_authorized(api_key):
+    return MinecraftServer.objects.filter(api_key=api_key).count() > 0
+
+# Views
+
 """ So we can serialize the paoso values in simplejson. """
 class DecimalEncoder(simplejson.JSONEncoder):
     def _iterencode(self, o, markers=None):
@@ -25,9 +51,6 @@ class DecimalEncoder(simplejson.JSONEncoder):
             # which wouldn't work (see my comment below), so...
             return (str(o) for o in [o])
         return super(DecimalEncoder, self)._iterencode(o, markers)
-
-def is_server_authorized(api_key):
-    return MinecraftServer.objects.filter(api_key=api_key).count() > 0
 
 def minecraft_link(request):
     # Make sure user is logged in
@@ -73,11 +96,11 @@ def minecraft_update(request):
 
             minecraft_user.save()
 
-            response = {"result": "success"}
+            response = {"result": SUCCESS_RESPONSE}
         else:
-            response = {"result": "invalid_key"}
+            response = {"result": INVALID_KEY_RESPONSE}
     except KeyError:
-        response = {"result": "invalid_request"}
+        response = {"result": INVALID_REQUEST_RESPNSE}
     except:
         response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response))
@@ -116,11 +139,11 @@ def minecraft_get(request):
             account = MinecraftAccount.objects.get(minecraft_username=mineuser)
             accountdict = model_to_dict(account)
             donatordict = model_to_dict(account.donator_level)
-            response = {"result": "success", "user": accountdict, "donator": donatordict}
+            response = {"result": SUCCESS_RESPONSE, "user": accountdict, "donator": donatordict}
         else:
-            response = {"result": "no_user"}
+            response = {"result": NO_USER_RESPONSE}
     except KeyError:
-        response = {"result": "invalid_request"}
+        response = {"result": INVALID_REQUEST_RESPNSE}
     except:
         response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response))
@@ -148,11 +171,11 @@ def minecraft_give(request):
             fromuser.save()
             touser.save()
 
-            response = {"result": "success"}
+            response = {"result": SUCCESS_RESPONSE}
         else:
-            response = {"result": "invalid_key"}
+            response = {"result": INVALID_KEY_RESPONSE}
     except KeyError:
-        response = {"result": "invalid_request"}
+        response = {"result": INVALID_REQUEST_RESPNSE}
     except:
         response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response))
@@ -237,11 +260,11 @@ def minecraft_sell_value(request):
 
         # Get individual rate and multiply by amount
         value = Decimal(Decimal(item.sell_value)/Decimal(item.buy_sell_quantity)) * Decimal(amount)
-        response = {"result": "success", "value": value}
+        response = {"result": SUCCESS_RESPONSE, "value": value}
     except ObjectDoesNotExist:
         response = {"result": "item_not_found"}
     except KeyError:
-        response = {"result": "invalid_request"}
+        response = {"result": INVALID_REQUEST_RESPNSE}
     except:
         response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response, cls=DecimalEncoder))
@@ -269,12 +292,8 @@ def minecraft_stash_get(request):
             account_name = request.REQUEST["username"]
             account = MinecraftAccount.objects.get(minecraft_username=account_name)
 
-            # Create stash if not present
-            if MinecraftStash.objects.filter(owner=account).count() == 0:
-                stash = MinecraftStash.objects.create(owner=account)
-                stash.save()
-            else:
-                stash = MinecraftStash.objects.get(owner=account)
+            # Get/create stash
+            stash = get_minecraft_stash(account)
 
             stash_items = MinecraftStashItem.objects.filter(stash=stash)
 
@@ -288,13 +307,13 @@ def minecraft_stash_get(request):
                               'amount': stash_item.amount }
                 stash_data['items'].append(item_data)
 
-            response = {"result": "success", "stash": stash_data}
+            response = {"result": SUCCESS_RESPONSE, "stash": stash_data}
         else:
-            response = {"result": "invalid_key"}
+            response = {"result": INVALID_KEY_RESPONSE}
     except ObjectDoesNotExist:
-        response = {"result": "no_user"}
+        response = {"result": NO_USER_RESPONSE}
     except KeyError:
-        response = {"result": "invalid_request"}
+        response = {"result": INVALID_REQUEST_RESPNSE}
     except:
         response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response))
@@ -313,15 +332,10 @@ def minecraft_stash_update(request):
             item_data = request.REQUEST["items"]
             parsed_contents = simplejson.loads(item_data)
 
-            # Clear out existing stash and its items if exists, if not create new one
-            if MinecraftStash.objects.filter(owner=minecraft_account).count() > 0:
-                # Clear stash
-                stash = MinecraftStash.objects.get(owner=minecraft_account)
-                # Remove old stash items
-                MinecraftStashItem.objects.filter(stash=stash).delete()
-            else:
-                # Create new stash
-                stash = MinecraftStash.objects.create(owner=minecraft_account)
+            # Get and clear stash
+            stash = get_minecraft_stash(minecraft_account)
+            # Remove old stash items
+            MinecraftStashItem.objects.filter(stash=stash).delete()
 
             for item in parsed_contents:
                 data_value = item['data_value']
@@ -343,12 +357,12 @@ def minecraft_stash_update(request):
 
             # Add new items
             stash.save()
-            response = {"result": "success"}
+            response = {"result": SUCCESS_RESPONSE}
         else:
-            response = {"result": "invalid_key"}
+            response = {"result": INVALID_KEY_RESPONSE}
     except KeyError:
-        response = {"result": "invalid_request"}
-    #except:
-    #    response = {"result": "error"}
+        response = {"result": INVALID_REQUEST_RESPNSE}
+    except:
+        response = {"result": "error"}
 
     return HttpResponse(simplejson.dumps(response))
