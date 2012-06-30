@@ -6,5 +6,8 @@ class Page(models.Model):
     title = models.CharField(max_length=20)
     body = models.TextField()
 
+    def __unicode__(self):
+    	return self.title
+
 class PageAdmin(admin.ModelAdmin):
     list_display = ('identifier', 'title', 'body')

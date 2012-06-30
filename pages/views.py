@@ -1,13 +1,18 @@
 from pages.models import Page
 from django.template import RequestContext, Template
-from django.template.loader import get_template
+from django.shortcuts import render_to_response, redirect
+from django.forms.models import model_to_dict
 from django.http import HttpResponse
+from django.utils import simplejson
 
 # Loads 'home' if there is no page_id passed.
-def get_page(request, page_id='home'):
-    page = Page.objects.get(identifier=page_id)
-    template = get_template('page.html')
-    # TODO: Dynamic captions for fun!
-    data = {"page": page, "caption": "newly redesigned for great justice"}
-    context = RequestContext(request, data)
-    return HttpResponse(template.render(context))
+def get_page(request, page_id='home', format='html'):
+	page = Page.objects.get(identifier=page_id)
+
+    if format == 'html':
+	    # TODO: Dynamic captions for fun!
+	    return HttpResponse(render_to_response('page.html',
+	    	{"page": page, "caption": "newly redesigned for great justice"},
+	    	RequestContext(request)))
+	elif format == 'json':
+		return simplejson.dumps(model_to_dict(page), mimetype="application/json")
