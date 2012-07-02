@@ -15,10 +15,14 @@ def blog(request, format="html"):
 	elif format == "json":
 		# JSONify everything
 		post_list = []
-		for post in posts:
-			# TODO switch to model_to_dict later.
-			post_list.append({"title": post.title, "description": post.description, "body": post.body})
-		return HttpResponse(simplejson.dumps({"posts" : post_list}), mimetype="application/json")
+		try:
+			for post in posts:
+				# TODO switch to model_to_dict later.
+				post_list.append({"title": post.title, "description": post.description, "body": post.body})
+			result = 'success'
+		except:
+			result = 'error'
+		return HttpResponse(simplejson.dumps({"posts" : post_list, "result" : result }), mimetype="application/json")
 
 def blog_post(request, post_id):
 	post = BlogPost.objects.get(id=post_id)
