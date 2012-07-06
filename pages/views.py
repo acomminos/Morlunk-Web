@@ -12,7 +12,7 @@ def get_page(request, page_id='home', format='html'):
     if format == 'html':
         # TODO: Dynamic captions for fun!
         return HttpResponse(render_to_response('page.html',
-            {"page": page, "caption": "newly redesigned for great justice"},
+            {"page": page},
             RequestContext(request)))
     elif format == 'json':
         return HttpResponse(simplejson.dumps({"result": "success", "page": model_to_dict(page)}), mimetype="application/json")

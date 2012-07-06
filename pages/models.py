@@ -5,9 +5,10 @@ class Page(models.Model):
     identifier = models.CharField(max_length=10)
     title = models.CharField(max_length=20)
     body = models.TextField()
+    featured = models.BooleanField(default=False)
 
     def __unicode__(self):
     	return self.title
 
 class PageAdmin(admin.ModelAdmin):
-    list_display = ('identifier', 'title', 'body')
+    list_display = ('identifier', 'title', 'body', 'featured')

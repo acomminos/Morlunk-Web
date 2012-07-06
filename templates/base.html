@@ -11,7 +11,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/morlunk_common.js"></script>
         <!-- Sharing code -->
         <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-        <script type="text/javascript">stLight.options({publisher: "ur-b199f62a-5d6f-c9a2-3186-baebe71211c9"}); </script>
     </head>
     <body>
 
@@ -20,27 +19,22 @@
             <div class="bannertext">
                 morlunk co.
                 <div class="bannercaption">
-                    {% block caption %}Unifying exceptional experiences{% endblock %}
+                    {% block caption %}official sponsor of the 2012 chwollympics{% endblock %}
                 </div>
             </div>
 
-        <!-- Begin: adBrite, Generated: 2012-05-30 14:59:03  -->
-        <script type="text/javascript">
-        var AdBrite_Title_Color = '777777';
-        var AdBrite_Text_Color = '777777';
-        var AdBrite_Background_Color = 'EEEEEE';
-        var AdBrite_Border_Color = 'DDDDDD';
-        var AdBrite_URL_Color = '4C4C4C';
-        try{var AdBrite_Iframe=window.top!=window.self?2:1;var AdBrite_Referrer=document.referrer==''?document.location:document.referrer;AdBrite_Referrer=encodeURIComponent(AdBrite_Referrer);}catch(e){var AdBrite_Iframe='';var AdBrite_Referrer='';}
-        </script>
-        <span style="white-space:nowrap;float:right;"><script type="text/javascript">document.write(String.fromCharCode(60,83,67,82,73,80,84));document.write(' src="http://ads.adbrite.com/mb/text_group.php?sid=2159540&zs=3732385f3930&ifr='+AdBrite_Iframe+'&ref='+AdBrite_Referrer+'" type="text/javascript">');document.write(String.fromCharCode(60,47,83,67,82,73,80,84,62));</script>
-        <!-- End: adBrite -->
+            {% if user.is_authenticated %}
+            <div id="logininfo">
+                Logged in as <b>{{ user.username }}</b>
+            </div>
+            {% endif %}
 
             <div id="bannermenu">
                 <a class="bannerlink" href="/">BLOG</a> 
                 <a class="bannerlink" href="/page/minecraft/">MINECRAFT</a> 
                 <a class="bannerlink" href="/page/android/">ANDROID</a> 
                 <a class="bannerlink" href="/page/community/">COMMUNITY</a> 
+                <a class="bannerlink" href="/page/app/">APP</a>
                 <div style="position: absolute; top: 0px; right: 0px;"> <!-- We create a div for right-aligning menu options because float:right doesn't render properly on FF13 and some other browsers. -->
                     <a class="bannerlink" href="/account/">ACCOUNT</a>
                     {% if user.is_staff %}
