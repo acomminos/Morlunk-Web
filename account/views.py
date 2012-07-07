@@ -29,7 +29,7 @@ def control_panel(request):
         # Go to login page
         return redirect("/account/login/")
 
-def user_login(request):
+def user_login(request, format='html'):
     # Handle login requests
     if request.POST:
         # Attempt to log in with post data
@@ -41,26 +41,39 @@ def user_login(request):
             if user is not None:
                 login(request, user)
                 # Go to control panel
-                return redirect("/account/")
+
+                if format == 'html':
+                    return redirect("/account/")
+                elif format == 'json':
+                    return HttpResponse(simplejson.dumps({'result': 'success'}), mimetype="application/json")
             else:
                 # Invalid credentials
-                return render_to_response('login.html',
-                                          { 'error': True },
-                                          RequestContext(request))
+                if format == 'html':
+                    return render_to_response('login.html',
+                                             { 'error': True },
+                                             RequestContext(request))
+                elif format == 'json':
+                    return HttpResponse(simplejson.dumps({'result': 'no_user'}), mimetype="application/json")
         except KeyError:
-            # Return the login page with the error message displayed
-            return render_to_response('login.html',
-                                  { 'error': True },
-                                  RequestContext(request))
+            if format == 'html':
+                # Return the login page with the error message displayed
+                return render_to_response('login.html',
+                                      { 'error': True },
+                                      RequestContext(request))
+            elif format == 'json':
+                return HttpResponse(simplejson.dumps({'result': 'invalid_request'}), mimetype="application/json")
 
-    # Do something, dunno what
-    if request.user.is_authenticated() is False:
-        return render_to_response('login.html',
-                                  { },
-                                  RequestContext(request))
-    else:
-        # Redirect to control panel if logged in
-        return redirect("/account/")
+    if format == 'html':
+        # Do something, dunno what
+        if request.user.is_authenticated() is False:
+            return render_to_response('login.html',
+                                      { },
+                                      RequestContext(request))
+        else:
+            # Redirect to control panel if logged in
+            return redirect("/account/")
+    elif format == 'json':
+        return HttpResponse(simplejson.dumps({'result': 'invalid_request'}), mimetype="application/json")
 
 def user_logout(request):
     if request.user.is_authenticated():

@@ -1,0 +1,9 @@
+.centerpane {
+    min-width: 0px;
+    height: auto;
+    margin: 20px;
+    padding: 20px;
+    
+    background-color: #F1F1F1;
+    border: 1px solid #DDD;
+}
