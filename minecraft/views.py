@@ -20,6 +20,7 @@ from decimal import Decimal
 
 INVALID_REQUEST_RESPONSE = "invalid_request"
 INVALID_KEY_RESPONSE = "invalid_key"
+NO_AUTH_RESPONSE = "no_auth"
 NO_USER_RESPONSE = "no_user"
 SUCCESS_RESPONSE = "success"
 ERROR_RESPONSE = "error"
@@ -147,6 +148,19 @@ def minecraft_get(request):
     except:
         response = {"result": ERROR_RESPONSE}
     return HttpResponse(simplejson.dumps(response))
+
+def minecraft_user_get(request):
+    """Used by Morlunk Android app. Only retrieves the MinecraftAccount object."""
+    if request.user.is_authenticated() is False:
+        return HttpResponse(simplejson.dumps({'result': NO_AUTH_RESPONSE}), mimetype="application/json")
+
+    try:
+        account = MinecraftAccount.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return HttpResponse(simplejson.dumps({'result': NO_USER_RESPONSE}), mimetype="application/json")
+
+    accountdict = model_to_dict(account)
+    return HttpResponse(simplejson.dumps({'result': 'success', 'user': accountdict}), mimetype="application/json")
 
 @require_http_methods(["GET", "POST"])
 def minecraft_give(request):

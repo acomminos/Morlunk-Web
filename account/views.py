@@ -8,6 +8,7 @@ from django.db import IntegrityError
 from django.template import RequestContext, Template
 from django.shortcuts import render_to_response, redirect
 from account.forms import RegisterForm
+from django.views.decorators.csrf import csrf_exempt
 
 from minecraft.models import MinecraftAccount
 
@@ -29,6 +30,7 @@ def control_panel(request):
         # Go to login page
         return redirect("/account/login/")
 
+@csrf_exempt
 def user_login(request, format='html'):
     # Handle login requests
     if request.POST:
