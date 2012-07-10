@@ -21,6 +21,7 @@ from decimal import Decimal
 INVALID_REQUEST_RESPONSE = "invalid_request"
 INSUFFICIENT_FUNDS_RESPONSE = "insufficient_funds"
 INVALID_KEY_RESPONSE = "invalid_key"
+NO_MINECRAFT_ACCOUNT_RESPONSE = "no_minecraft_account"
 NO_AUTH_RESPONSE = "no_auth"
 NO_USER_RESPONSE = "no_user"
 SUCCESS_RESPONSE = "success"
@@ -143,7 +144,7 @@ def minecraft_get(request):
             donatordict = model_to_dict(account.donator_level)
             response = {"result": SUCCESS_RESPONSE, "user": accountdict, "donator": donatordict}
         else:
-            response = {"result": NO_USER_RESPONSE}
+            response = {"result": NO_MINECRAFT_ACCOUNT_RESPONSE}
     except KeyError:
         response = {"result": INVALID_REQUEST_RESPONSE}
     except:
@@ -158,7 +159,7 @@ def minecraft_user_get(request):
     try:
         account = MinecraftAccount.objects.get(user=request.user)
     except ObjectDoesNotExist:
-        return HttpResponse(simplejson.dumps({'result': NO_USER_RESPONSE}), mimetype="application/json")
+        return HttpResponse(simplejson.dumps({'result': NO_MINECRAFT_ACCOUNT_RESPONSE}), mimetype="application/json")
 
     accountdict = model_to_dict(account)
     return HttpResponse(simplejson.dumps({'result': 'success', 'user': accountdict}), mimetype="application/json")
@@ -233,7 +234,7 @@ def minecraft_buy(request):
     user = request.user
 
     if MinecraftAccount.objects.filter(user=user).count() == 0:
-        return HttpResponse(simplejson.dumps({'result': INVALID_REQUEST_RESPONSE}))
+        return HttpResponse(simplejson.dumps({'result': NO_MINECRAFT_ACCOUNT_RESPONSE}))
 
     minecraft_account = MinecraftAccount.objects.get(user=user)
 
