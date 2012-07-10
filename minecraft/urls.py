@@ -1,12 +1,13 @@
 from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('minecraft.views',
-        (r'^link/', 'minecraft_link'),
-        (r'^grief/', 'minecraft_grief'),
-        (r'^rates/', 'minecraft_rates'),
-        (r'^store/buy/', 'minecraft_buy'),
-        (r'^store/', 'minecraft_store'),
-        (r'^redeem/', 'minecraft_paoso_redeem'),
+        (r'^link/$', 'minecraft_link'),
+        (r'^grief/$', 'minecraft_grief'),
+        (r'^rates/$', 'minecraft_rates'),
+        (r'^store/buy/$', 'minecraft_buy'),
+        (r'^store/$', 'minecraft_store'),
+        (r'^store/json$', 'minecraft_store', {'format': 'json'}),
+        (r'^redeem/$', 'minecraft_paoso_redeem'),
         (r'^stash/(?P<user_name>.*)/$', 'minecraft_stash'),
         
         (r'^update$', 'minecraft_update'),

@@ -199,21 +199,31 @@ def minecraft_rates(request):
                                 { 'minecraft_items': MinecraftItem.objects.filter(sell_value__gt=0) },
                                 RequestContext(request))
 
-def minecraft_store(request):
-    if request.user.is_authenticated is False:
-        return redirect("/account/")
+def minecraft_store(request, format='html'):
 
-    user = request.user
+    items = MinecraftItem.objects.filter(buy_value__gt=0)
 
-    if MinecraftAccount.objects.filter(user=user).count() == 0:
-        return redirect("/minecraft/link/")
+    if format == 'html':
+        if request.user.is_authenticated() is False:
+            return redirect("/account/")
 
-    minecraft_account = MinecraftAccount.objects.get(user=user)
+        user = request.user
 
-    return render_to_response('store.html',
-                                { 'minecraft_account': minecraft_account,
-                                  'minecraft_items': MinecraftItem.objects.filter(buy_value__gt=0)},
-                                RequestContext(request))
+        if MinecraftAccount.objects.filter(user=user).count() == 0:
+            return redirect("/minecraft/link/")
+
+        minecraft_account = MinecraftAccount.objects.get(user=user)
+
+        return render_to_response('store.html',
+                                    { 'minecraft_account': minecraft_account,
+                                      'minecraft_items': items},
+                                    RequestContext(request))
+    elif format == 'json':
+        itemlist = []
+        for item in items:
+            itemlist.append(model_to_dict(item, exclude='icon'))
+        return HttpResponse(simplejson.dumps({'result': SUCCESS_RESPONSE, 'items': itemlist}), mimetype="application/json")
+
 
 def minecraft_buy(request):
     if request.user.is_authenticated is False:
@@ -309,31 +319,26 @@ def minecraft_stash(request, user_name):
 @require_http_methods(["GET", "POST"])
 def minecraft_stash_get(request):
     try:
-        api_key = request.REQUEST["key"]
+        account_name = request.REQUEST["username"]
+        account = MinecraftAccount.objects.get(minecraft_username=account_name)
 
-        if is_server_authorized(api_key):
+        # Get/create stash
+        stash = get_minecraft_stash(account)
 
-            account_name = request.REQUEST["username"]
-            account = MinecraftAccount.objects.get(minecraft_username=account_name)
+        stash_items = MinecraftStashItem.objects.filter(stash=stash)
 
-            # Get/create stash
-            stash = get_minecraft_stash(account)
+        stash_data = { 'name': stash.name, 
+                       'size': stash.size,
+                       'items': [] }
 
-            stash_items = MinecraftStashItem.objects.filter(stash=stash)
+        for stash_item in stash_items:
+            item_data = { 'name': stash_item.item.name,
+                          'data_value': stash_item.item.data_value,
+                          'damage_value': stash_item.damage_value, # use stash item's item value
+                          'amount': stash_item.amount }
+            stash_data['items'].append(item_data)
 
-            stash_data = { 'name': stash.name, 
-                           'size': stash.size,
-                           'items': [] }
-
-            for stash_item in stash_items:
-                item_data = { 'data_value': stash_item.item.data_value,
-                              'damage_value': stash_item.damage_value, # use stash item's item value
-                              'amount': stash_item.amount }
-                stash_data['items'].append(item_data)
-
-            response = {"result": SUCCESS_RESPONSE, "stash": stash_data}
-        else:
-            response = {"result": INVALID_KEY_RESPONSE}
+        response = {"result": SUCCESS_RESPONSE, "stash": stash_data}
     except ObjectDoesNotExist:
         response = {"result": NO_USER_RESPONSE}
     except KeyError:
