@@ -19,6 +19,7 @@ from decimal import Decimal
 # Constants
 
 INVALID_REQUEST_RESPONSE = "invalid_request"
+INSUFFICIENT_FUNDS_RESPONSE = "insufficient_funds"
 INVALID_KEY_RESPONSE = "invalid_key"
 NO_AUTH_RESPONSE = "no_auth"
 NO_USER_RESPONSE = "no_user"
@@ -177,7 +178,7 @@ def minecraft_give(request):
             touser = MinecraftAccount.objects.get(minecraft_username=toname)
 
             if fromuser.paosos < amount:
-                return HttpResponse(simplejson.dumps({"result": "insufficient_funds"}))
+                return HttpResponse(simplejson.dumps({"result": INSUFFICIENT_FUNDS_RESPONSE}))
 
             fromuser.paosos -= amount
             touser.paosos += amount
@@ -226,8 +227,8 @@ def minecraft_store(request, format='html'):
 
 
 def minecraft_buy(request):
-    if request.user.is_authenticated is False:
-        return HttpResponse(simplejson.dumps({'result': INVALID_REQUEST_RESPONSE}))
+    if request.user.is_authenticated() is False:
+        return HttpResponse(simplejson.dumps({'result': NO_AUTH_RESPONSE}))
 
     user = request.user
 
@@ -248,7 +249,7 @@ def minecraft_buy(request):
         stash_item.save()
         response = SUCCESS_RESPONSE
     else:
-        response = "insufficient_funds"
+        response = INSUFFICIENT_FUNDS_RESPONSE
     return HttpResponse(simplejson.dumps({'result': response}))
 
 def minecraft_paoso_redeem(request):
