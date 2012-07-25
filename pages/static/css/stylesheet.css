@@ -1,5 +1,6 @@
 body {
     color: #777;
+    background-color: #F5F5F5;
 }
 
 a:link { color: #777; }
@@ -78,15 +79,13 @@ h1 a:link { text-decoration: none; }
     top: 150px;
     left: 0px;
     right: 0px;
-    bottom: 0px;
+    height: auto;
     background-color: #F5F5F5;
 
     padding: 25px;
 
     font-family: "Roboto-Light", Sans, Arial;
     font-size: 11pt;
-
-    overflow: auto;
 }
 
 #logininfo {
