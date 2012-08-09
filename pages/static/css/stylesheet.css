@@ -3,103 +3,60 @@ body {
     background-color: #F5F5F5;
 }
 
-a:link { color: #777; }
+a:link { color: #777; text-decoration: none; }
 a:hover { text-decoration: underline; }
 a:visited { color: #777; }
 
 h1 a:link { text-decoration: none; }
 
-#banner {
+#navpane {
     position: absolute;
+    left: 0px;
     top: 0px;
-    left: 0px;
-    right: 0px;
-    height: 130px;
-    line-height: 90px;
-    padding: 10px;
-    background-color: #EEE;
-    z-index: 1;
-    border-bottom: 1px solid #DDD;
-    -moz-box-shadow: 0px 0px 15px #CCC;
-    -webkit-box-shadow: 0px 0px 15px #CCC;
-    box-shadow: 0px 0px 15px #CCC;
-    overflow: hidden;
-}
-
-.bannertext {
-    position: relative;
-
-    /* Padding from logo */
-    padding-left: 15px;
-    float: left;
-
-    width: auto;
-    height: 90px;
-    line-height: 65px;
-    font-family: "Roboto-Light";
-    font-size: 48pt;
-    color: #777;
-}
-
-.bannercaption {
-    position: relative;
-
-    /* Indent */
-    padding-left: 2px;
-
-    font-family: "Roboto-Light";
-    font-size: 14pt;
-    line-height: 20px;
-    color: #999;
-}
-
-.bannerlink {
-    margin: 0px 10px;
-}
-
-#bannermenu {
-    position: absolute;
-    left: 0px;
     bottom: 0px;
-    right: 0px;
-    line-height: 40px;
-    padding: 0px 20px;
-
-    background-color: #F5F5F5;
-    border: 1px solid #DDD;
-
-    font-size: 14pt;
-    font-family: "Roboto-Light", "Sans", "Arial";
+    width: 250px;
+    background-color: #F1F1F1;
+    border-right: 1px solid #DDD;
+    -moz-box-shadow: 0px 0px 10px #888;
+    -webkit-box-shadow: 0px 0px 10px #888;
+    box-shadow: 0px 0px 10px #888;
+    z-index: 1;
 }
 
-#bannermenu a:link { text-decoration: none; }
+#navheader {
+    width: 100%;
+    height: 300px;
+    background-image: url('../img/morlunk_header.png');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.navitem {
+    position: relative;
+    color: #CCC;
+    width: 100%;
+    height: 30px;
+    padding: 5px;
+    font-size: 12pt;
+    line-height: 30px;
+    font-variant: small-caps;
+    font-family: "Roboto-Light", Sans, Arial;
+    border-top: 1px solid #DDD;
+}
 
 #content {
     position: absolute;
-    top: 150px;
-    left: 0px;
+    top: 0px;
+    left: 250px;
     right: 0px;
-    height: auto;
+    bottom: 0px;
     background-color: #F5F5F5;
 
     padding: 25px;
 
     font-family: "Roboto-Light", Sans, Arial;
     font-size: 11pt;
-}
-
-#logininfo {
-    position: absolute;
-    bottom: 40px;
-    right: 0px;
-    text-align: right;
-    line-height: 12px;
-    font-size: 10pt;
-    font-family: "Roboto-Light", Sans, Arial;
-    padding: 5px;
-    background-color: #F5F5F5;
-    border: 1px solid #DDD;
-    border-bottom: none;
+    overflow: scroll;
 }
 
 #loginbox {
