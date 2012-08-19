@@ -14,7 +14,7 @@ h1 a:link { text-decoration: none; }
     left: 0px;
     top: 0px;
     bottom: 0px;
-    width: 250px;
+    width: 200px;
     background-color: #F1F1F1;
     border-right: 1px solid #DDD;
     -moz-box-shadow: 0px 0px 10px #888;
@@ -25,29 +25,33 @@ h1 a:link { text-decoration: none; }
 
 #navheader {
     width: 100%;
-    height: 300px;
-    background-image: url('../img/morlunk_header.png');
+    height: 200px;
+    background-image: url('../img/morlunk_logo.png');
     background-position: center;
+    background-size: contain;
     background-repeat: no-repeat;
 }
 
-.navitem {
+a.navitem {
     position: relative;
-    color: #CCC;
+    left: 0px;
+    right: 0px;
     width: 100%;
     height: 30px;
     padding: 5px;
+    left-padding: 15px;
     font-size: 12pt;
     line-height: 30px;
     font-variant: small-caps;
     font-family: "Roboto-Light", Sans, Arial;
     border-top: 1px solid #DDD;
+    display: inline-block;
 }
 
 #content {
     position: absolute;
     top: 0px;
-    left: 250px;
+    left: 200px;
     right: 0px;
     bottom: 0px;
     background-color: #F5F5F5;
@@ -101,7 +105,7 @@ h1 a:link { text-decoration: none; }
     right: 0px;
     min-width: 512px;
     height: auto;
-    margin: 0px 128px 20px 128px;
+    margin: 0px 10% 20px 10%;
     padding: 25px;
     
     background-color: #F1F1F1;
