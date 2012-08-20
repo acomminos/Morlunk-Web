@@ -36,16 +36,15 @@ a.navitem {
     position: relative;
     left: 0px;
     right: 0px;
-    width: 100%;
     height: 30px;
     padding: 5px;
-    left-padding: 15px;
+    padding-left: 10px;
     font-size: 12pt;
     line-height: 30px;
     font-variant: small-caps;
     font-family: "Roboto-Light", Sans, Arial;
     border-top: 1px solid #DDD;
-    display: inline-block;
+    display: block;
 }
 
 #content {
