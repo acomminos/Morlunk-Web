@@ -194,7 +194,24 @@ def minecraft_give(request):
         response = {"result": INVALID_REQUEST_RESPONSE}
     except:
         response = {"result": ERROR_RESPONSE}
+    return HttpResponse(simplejson.dumps(response), mimetype="application/json")
+
+"""
+@require_http_methods(["POST"])
+def minecraft_give_web(request):
+    if request.user.is_authenticated() is False:
+        return redirect("/account/")
+
+    try:
+        account = MinecraftAccount.objects.get(user=request.user)
+        request.POST["from"] = account.minecraft_username # Override "from" field with user name.
+        minecraft_give(request)
+    except KeyError:
+        response = {"result": INVALID_REQUEST_RESPONSE}
+    except:
+        response = {"result": ERROR_RESPONSE}
     return HttpResponse(simplejson.dumps(response))
+"""
 
 def minecraft_rates(request):
     return render_to_response('rates.html',
