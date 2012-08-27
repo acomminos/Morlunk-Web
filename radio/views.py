@@ -1,5 +1,5 @@
 from datetime import datetime
-from radio.models import RadioItem
+from radio.models import RadioItem, Radio
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
@@ -9,35 +9,41 @@ import threading
 import os
 # Create your views here.
 
-class RadioState(object):
-    radio_playing = False
-    play_thread = None
+def get_radio():
+    return Radio.objects.all()[:1].get()
 
 def show_radio(request):
     return render_to_response('radio.html', 
-        {"queue": RadioItem.objects.filter(played=False).order_by('submission_date'),
-         "playing": RadioState.radio_playing}, 
+        {"queue": RadioItem.objects.filter(played=False).order_by('id'),
+         "playing": get_radio().playing,
+         "recent": RadioItem.objects.filter(played=True).order_by('-id')[:10]}, 
         RequestContext(request))
 
 def start_playing(request):
-    if RadioState.radio_playing is False:
-        RadioState.radio_playing = True
+    radio = get_radio()
+    if radio.playing == False:
+        radio.playing = True
+        radio.save()
         next_song()
+        return HttpResponse(simplejson.dumps({"result": "success"}))
 
-    return HttpResponse(simplejson.dumps({"result": "success"}))
+    return HttpResponse(simplejson.dumps({"result": "already_playing"}))
 
 def stop_playing(request):
-    if request.user.is_staff is False:
+    radio = get_radio()
+
+    if request.user.is_staff == False:
         return HttpResponse(status=403)
 
-    RadioState.radio_playing = False
+    radio.playing = False
+    radio.save()
 
-    if RadioState.play_thread is not None:
-        RadioState.play_thread.kill()
+    # TODO FIX
 
     return HttpResponse(simplejson.dumps({"result": "success"}))
 
 def queue_song(request):
+    radio = get_radio()
     try:
         user_title = request.REQUEST["user_title"]
         video_id = request.REQUEST["video_id"]
@@ -46,8 +52,9 @@ def queue_song(request):
         item.save()
 
         # Start playing if not already playing
-        if RadioState.radio_playing is False:
-            RadioState.radio_playing = True
+        if radio.playing == False:
+            radio.playing = True
+            radio.save()
             next_song()
 
         response = {"result": "success"}
@@ -58,14 +65,16 @@ def queue_song(request):
     return HttpResponse(simplejson.dumps(response))
 
 def next_song():
-    if RadioState.radio_playing is True:
+    radio = get_radio()
+    if radio.playing == True:
         # Start playing
         items = RadioItem.objects.filter(played=False).order_by('submission_date')
         if items.count() > 0:
-            RadioState.play_thread = PlayThread(items[0], next_song)
-            RadioState.play_thread.start()
+            play_thread = PlayThread(items[0], next_song)
+            play_thread.start()
         else:
-            RadioState.radio_playing = False
+            radio.playing = False
+            radio.save()
 
 class PlayThread(threading.Thread):
     """ Plays a radio item, and then executes the callback upon completion. """

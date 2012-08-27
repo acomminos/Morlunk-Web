@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib import admin
 
+class Radio(models.Model):
+	name = models.CharField(max_length=50)
+	playing = models.BooleanField(default=False)
+
 # Create your models here.
 class RadioItem(models.Model):
 	user_title = models.CharField(max_length=50)

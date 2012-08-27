@@ -15,17 +15,24 @@ function stopQueue() {
 function addToQueue() {
 	var user_title = $("#userTitle").val();
 	var video_id = $("#videoId").val();
-	$.ajax({
-		'url': '/radio/queue',
-		'data': {
+	$.get('/radio/queue',
+		{
 			'user_title': user_title,
 			'video_id': video_id
-		},
-		'success': function() {
-			alert("Your song has been added to the queue.");
-		},
-		'dataType': 'json' 
-	})
+		}
+	).success(function(data) {
+    	var response = jQuery.parseJSON(data);
+        if(response.result == "success") {
+            $().toastmessage('showSuccessToast', "Success! Your song has been queued.");
+        	$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+video_id+"\"></a>"+user_title+"</li>");
+        	$("#userTitle").val("");
+        	$("#videoId").val("");
+        } else if(response.result == "invalid_request") {
+            $().toastmessage('showWarningToast', "Invalid request! Try resubmitting.");
+        } else {
+            $().toastmessage('showErrorToast', "Server error! Song not added to queue.")
+        }
+	});
 }
 
 </script>
@@ -33,20 +40,32 @@ function addToQueue() {
 <h1>Morlunk Mumble Radio Alpha</h1>
 {% if user.is_staff %}
 <h3>Admin Controls</h3>
-<button onclick="startQueue()">Play</button><button onclick="stopQueue()">Stop</button>
+<button onclick="startQueue()">Play</button><button onclick="stopQueue()">Stop</button><br><br>
 {% endif %}
+Radio status: <b>{% if playing %}Online{% else %}Offline{% endif %}</b><br><br>
+Currently Playing: <b><a href="http://www.youtube.com/watch?v={{ queue.0.video_id }}">{{ queue.0.user_title }}</a></b><br>
+<div class="controlpane">
 <h3>Queued Items</h3>
-<ol>
+<ol id="queue">
 	{% for item in queue %}
 	<li><a href="http://www.youtube.com/watch?v={{ item.video_id }}">{{ item.user_title }}</a></li>
 	{% endfor %}
 </ol>
-
+</div>
+<div class="controlpane">
+<h3>Recently Played</h3>
+<ol id="recent">
+	{% for item in recent %}
+	<li><a href="http://www.youtube.com/watch?v={{ item.video_id }}">{{ item.user_title }}</a></li>
+	{% endfor %}
+</ol>
+</div>
+<div class="controlpane">
 <h3>Add Item</h3>
-<b>Video Title:</b><br>
-<input type="text" id="userTitle"/><br><br>
-<b>Youtube Video ID:</b><br>
-<input type="text" id="videoId"/><br><br>
+Video Title:<br>
+<input type="text" id="userTitle" maxlength="50" style="width: 100%;"/><br><br>
+Youtube Video ID:<br>
+<input type="text" id="videoId" maxlength="20" style="width: 100%;"/><br><br>
 <button onclick="addToQueue()">Submit</button>
-
+</div>
 {% endblock %}
