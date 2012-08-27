@@ -129,6 +129,7 @@ INSTALLED_APPS = (
     'account',
     'paoman',
     'blog',
+    'radio',
 )
 
 # A sample logging configuration. The only tangible logging

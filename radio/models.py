@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 
 # Create your models here.
 class RadioItem(models.Model):
@@ -6,3 +7,6 @@ class RadioItem(models.Model):
 	video_id = models.CharField(max_length=20)
 	submission_date = models.DateField()
 	played = models.BooleanField(default=False)
+
+class RadioItemManager(admin.ModelAdmin):
+	list_display = ('user_title', 'video_id', 'submission_date', 'played')
