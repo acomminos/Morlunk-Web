@@ -7,7 +7,12 @@ import subprocess
 import simplejson
 import threading
 import os
+import gdata.youtube
+import gdata.youtube.service
 # Create your views here.
+
+# TODO move this out!
+YOUTUBE_API_KEY = "AI39si7hH4sRO3JdHIpfudrGd8lyZsXQnXkXrmwX_bq2io7ijeNDUQdGrYT0l77Nao0h9ZoTjjzdK4-kcuRgMUQE8pDCa0q8FA"
 
 def get_radio():
     return Radio.objects.all()[:1].get()
@@ -42,13 +47,23 @@ def stop_playing(request):
 
     return HttpResponse(simplejson.dumps({"result": "success"}))
 
+def get_video_data(video_id):
+    """ Use YouTube Gdata API to get the YouTube entry."""
+    global YOUTUBE_API_KEY
+    yt_service = gdata.youtube.service.YouTubeService()
+    yt_service.developer_key = YOUTUBE_API_KEY
+    yt_service.client_id = 'Morlunk Radio'
+    entry = yt_service.GetYouTubeVideoEntry(video_id=video_id)
+    return entry
+
 def queue_song(request):
     radio = get_radio()
     try:
-        user_title = request.REQUEST["user_title"]
         video_id = request.REQUEST["video_id"]
         submission_date = datetime.now()
-        item = RadioItem(user_title=user_title, video_id=video_id, submission_date=submission_date)
+        entry = get_video_data(video_id)
+
+        item = RadioItem(user_title=entry.media.title.text, video_id=video_id, submission_date=submission_date)
         item.save()
 
         # Start playing if not already playing
@@ -60,8 +75,8 @@ def queue_song(request):
         response = {"result": "success"}
     except KeyError:
         response = {"result": "invalid_request"}
-    except:
-        response = {"result": "error"}
+    #except:
+    #    response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response))
 
 def next_song():

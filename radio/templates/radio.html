@@ -13,11 +13,9 @@ function stopQueue() {
 }
 
 function addToQueue() {
-	var user_title = $("#userTitle").val();
 	var video_id = $("#videoId").val();
 	$.get('/radio/queue',
 		{
-			'user_title': user_title,
 			'video_id': video_id
 		}
 	).success(function(data) {
@@ -25,7 +23,6 @@ function addToQueue() {
         if(response.result == "success") {
             $().toastmessage('showSuccessToast', "Success! Your song has been queued.");
         	$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+video_id+"\"></a>"+user_title+"</li>");
-        	$("#userTitle").val("");
         	$("#videoId").val("");
         } else if(response.result == "invalid_request") {
             $().toastmessage('showWarningToast', "Invalid request! Try resubmitting.");
@@ -62,8 +59,6 @@ Currently Playing: <b><a href="http://www.youtube.com/watch?v={{ queue.0.video_i
 </div>
 <div class="controlpane">
 <h3>Add Item</h3>
-Video Title:<br>
-<input type="text" id="userTitle" maxlength="50" style="width: 100%;"/><br><br>
 Youtube Video ID:<br>
 <input type="text" id="videoId" maxlength="20" style="width: 100%;"/><br><br>
 <button onclick="addToQueue()">Submit</button>
