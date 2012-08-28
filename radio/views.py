@@ -22,9 +22,9 @@ def get_radio():
 
 def show_radio(request):
     return render_to_response('radio.html', 
-        {"queue": RadioItem.objects.filter(played=False).order_by('id'),
+        {"queue": RadioItem.objects.filter(played=False).order_by('queue_time'),
          "playing": get_radio().playing,
-         "recent": RadioItem.objects.filter(played=True).order_by('-id')[:10]}, 
+         "recent": RadioItem.objects.filter(played=True).order_by('-queue_time')[:10]}, 
         RequestContext(request))
 
 def start_playing(request):
@@ -73,14 +73,14 @@ def queue_song(request):
         matches = RadioItem.objects.filter(video_id=video_id)
         if matches.count() == 0:
             # If a match is not found, create a new entry
-            submission_date = datetime.now()
             entry = get_video_data(video_id)
 
-            item = RadioItem(user_title=entry.media.title.text, video_id=video_id, submission_date=submission_date)
+            item = RadioItem(user_title=entry.media.title.text, video_id=video_id)
             item.save()
         else:
             item = matches.get()
             item.played = False
+            item.queue_time = datetime.now()
             item.save()
 
         # Start playing if not already playing
@@ -121,7 +121,7 @@ def next_song():
     radio = get_radio()
     if radio.playing == True:
         # Start playing
-        items = RadioItem.objects.filter(played=False).order_by('submission_date')
+        items = RadioItem.objects.filter(played=False).order_by('queue_time')
         if items.count() > 0:
             play_thread = PlayThread(items[0], next_song)
             play_thread.start()
@@ -140,7 +140,7 @@ class PlayThread(threading.Thread):
         radio = get_radio()
 
         # Play espeak synth voice
-        tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. Submit new tracks at Morlunk.com slash radio.\"" % self.radio_item.user_title])
+        tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. You a stupid troll.\"" % self.radio_item.user_title])
         tts_process.wait()
 
         self.vlc_process = subprocess.Popen(["cvlc", "--no-video", "--play-and-exit", "http://www.youtube.com/watch?v=%s" % self.radio_item.video_id]) # Add extra quotes

@@ -6,7 +6,7 @@ from django.contrib import admin
 class RadioItem(models.Model):
 	user_title = models.CharField(max_length=200)
 	video_id = models.CharField(max_length=20)
-	submission_date = models.DateField()
+	queue_time = models.DateTimeField(auto_now=True) # Time it was queued- used to manage order of replayed items
 	played = models.BooleanField(default=False)
 
 class Radio(models.Model):
@@ -16,4 +16,4 @@ class Radio(models.Model):
 	#queue = models.ManyToManyField(RadioItem)
 
 class RadioItemManager(admin.ModelAdmin):
-	list_display = ('user_title', 'video_id', 'submission_date', 'played')
+	list_display = ('user_title', 'video_id', 'queue_time', 'played')
