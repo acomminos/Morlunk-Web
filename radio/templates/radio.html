@@ -22,7 +22,7 @@ function addToQueue() {
     	var response = jQuery.parseJSON(data);
         if(response.result == "success") {
             $().toastmessage('showSuccessToast', "Success! Your song has been queued.");
-        	$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+video_id+"\"></a>"+user_title+"</li>");
+        	$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+video_id+"\"></a>"+response.video_title+"</li>");
         	$("#videoId").val("");
         } else if(response.result == "invalid_request") {
             $().toastmessage('showWarningToast', "Invalid request! Try resubmitting.");

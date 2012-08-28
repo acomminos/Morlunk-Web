@@ -7,6 +7,7 @@ import subprocess
 import simplejson
 import threading
 import os
+import sys
 import gdata.youtube
 import gdata.youtube.service
 # Create your views here.
@@ -72,11 +73,11 @@ def queue_song(request):
             radio.save()
             next_song()
 
-        response = {"result": "success"}
+        response = {"result": "success", "video_title": entry.media.title.text}
     except KeyError:
         response = {"result": "invalid_request"}
-    #except:
-    #    response = {"result": "error"}
+    except Exception as e:
+        response = {"result": "error", "error": e}
     return HttpResponse(simplejson.dumps(response))
 
 def next_song():
