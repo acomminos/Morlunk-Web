@@ -10,6 +10,8 @@ import os
 import sys
 import gdata.youtube
 import gdata.youtube.service
+import random
+import signal
 # Create your views here.
 
 # TODO move this out!
@@ -44,7 +46,13 @@ def stop_playing(request):
     radio.playing = False
     radio.save()
 
-    # TODO FIX
+    os.kill(radio.vlc_pid, signal.SIGTERM)
+
+    return HttpResponse(simplejson.dumps({"result": "success"}))
+
+def skip_playing(request):
+    radio = get_radio()
+    os.kill(radio.vlc_pid, signal.SIGTERM)
 
     return HttpResponse(simplejson.dumps({"result": "success"}))
 
@@ -61,11 +69,19 @@ def queue_song(request):
     radio = get_radio()
     try:
         video_id = request.REQUEST["video_id"]
-        submission_date = datetime.now()
-        entry = get_video_data(video_id)
 
-        item = RadioItem(user_title=entry.media.title.text, video_id=video_id, submission_date=submission_date)
-        item.save()
+        matches = RadioItem.objects.filter(video_id=video_id)
+        if matches.count() == 0:
+            # If a match is not found, create a new entry
+            submission_date = datetime.now()
+            entry = get_video_data(video_id)
+
+            item = RadioItem(user_title=entry.media.title.text, video_id=video_id, submission_date=submission_date)
+            item.save()
+        else:
+            item = matches.get()
+            item.played = False
+            item.save()
 
         # Start playing if not already playing
         if radio.playing == False:
@@ -73,12 +89,33 @@ def queue_song(request):
             radio.save()
             next_song()
 
-        response = {"result": "success", "video_title": entry.media.title.text}
+        response = {"result": "success", "video_title": item.user_title}
     except KeyError:
         response = {"result": "invalid_request"}
     except Exception as e:
         response = {"result": "error", "error": e}
     return HttpResponse(simplejson.dumps(response))
+
+def queue_random(request, count=5):
+    iterations = 0
+    while iterations < count:
+        song_count = RadioItem.objects.all().count()
+        index = random.randint(0, song_count)
+        
+        item = RadioItem.objects.all()[index]
+        item.played = False
+        item.save()
+
+        iterations += 1
+    
+    radio = get_radio()
+
+    if radio.playing is False:
+        radio.playing = True
+        radio.save()
+        next_song()
+    
+    return redirect("/radio/")
 
 def next_song():
     radio = get_radio()
@@ -100,11 +137,18 @@ class PlayThread(threading.Thread):
         self.callback = callback
 
     def run(self):
+        radio = get_radio()
+
         # Play espeak synth voice
         tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. Submit new tracks at Morlunk.com slash radio.\"" % self.radio_item.user_title])
         tts_process.wait()
 
         self.vlc_process = subprocess.Popen(["cvlc", "--no-video", "--play-and-exit", "http://www.youtube.com/watch?v=%s" % self.radio_item.video_id]) # Add extra quotes
+
+        # Set VLC pid
+        radio.vlc_pid = self.vlc_process.pid
+        radio.save()
+
         self.vlc_process.wait()
 
         # Mark played

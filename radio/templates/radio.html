@@ -12,8 +12,16 @@ function stopQueue() {
 	$.get('/radio/stop');
 }
 
+function skip() {
+	$.get('/radio/skip');
+}
+
 function addToQueue() {
 	var video_id = $("#videoId").val();
+	addIdToQueue(video_id);
+}
+
+function addIdToQueue(video_id) {
 	$.get('/radio/queue',
 		{
 			'video_id': video_id
@@ -40,7 +48,11 @@ function addToQueue() {
 <button onclick="startQueue()">Play</button><button onclick="stopQueue()">Stop</button><br><br>
 {% endif %}
 Radio status: <b>{% if playing %}Online{% else %}Offline{% endif %}</b><br><br>
-Currently Playing: <b><a href="http://www.youtube.com/watch?v={{ queue.0.video_id }}">{{ queue.0.user_title }}</a></b><br>
+{% if playing %}
+Currently Playing: <b><a href="http://www.youtube.com/watch?v={{ queue.0.video_id }}">{{ queue.0.user_title }}</a></b> <i><a href="javascript:void(0)" onclick="skip()"/>(skip)</a></i><br>
+{% else %}
+Nothing is playing. <u><a href="/radio/random/">Click to queue 5 previously played songs.</a></u><br><br>
+{% endif %}
 <div class="controlpane">
 <h3>Queued Items</h3>
 <ol id="queue">
@@ -51,9 +63,12 @@ Currently Playing: <b><a href="http://www.youtube.com/watch?v={{ queue.0.video_i
 </div>
 <div class="controlpane">
 <h3>Recently Played</h3>
+<i>Click to add to queue</i>
 <ol id="recent">
 	{% for item in recent %}
-	<li><a href="http://www.youtube.com/watch?v={{ item.video_id }}">{{ item.user_title }}</a></li>
+	<li>
+		<a href="javascript:void(0)" onclick="addIdToQueue('{{ item.video_id }}')">{{ item.user_title }}</a>
+	</li>
 	{% endfor %}
 </ol>
 </div>
