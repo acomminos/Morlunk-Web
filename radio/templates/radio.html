@@ -2,6 +2,8 @@
 {% block title %}Mumble Radio{% endblock %}
 {% block content %}
 
+<link rel="stylesheet" href="{{ STATIC_URL }}css/radio.css"/>
+
 <script type="text/javascript">
 
 function startQueue() {
@@ -47,20 +49,28 @@ function updateQueue() {
 		{},
 		function(response) {
 			if(response.result == "success") {
-				$("ol[id='queue']").fadeOut(250, function() {
+				//$("ol[id='queue']").fadeOut(250, function() {
 					$("ol[id='queue'] li").remove(); // Clear list
 
 					$.each(response.queue, function(i, item) {
 	        			$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+item.video_id+"\">"+item.user_title+"</a></li>");
 					});
 
-					$("ol[id='queue']").fadeIn(250);
-				});
-				$("#currentlyPlaying").fadeOut(250, function() {
-					item = response.queue[0];
-					$("#currentlyPlaying").html("<a href=\"http://www.youtube.com/watch?v="+item.video_id+"\">"+item.user_title+"</a>");
-					$("#currentlyPlaying").fadeIn(250);
-				});
+				//	$("ol[id='queue']").fadeIn(250);
+				//});
+
+                $("ol[id='recent'] li").remove();
+
+                $.each(response.recent, function(i, item) {
+                    $("ol[id='recent']").append("<li><a href=\"javascript:void(0)\" onclick=\"addIdToQueue('"+item.video_id+"')\">"+item.user_title+"</a></li>");
+                });
+				//$("#currentlyPlaying").fadeOut(250, function() {
+                    if(response.queue.length > 0) {
+					    item = response.queue[0];
+					    $("#currentlyPlaying").html("<a href=\"http://www.youtube.com/watch?v="+item.video_id+"\">"+item.user_title+"</a>");
+                    }
+				//	$("#currentlyPlaying").fadeIn(250);
+				//});
 
 				// Show/hide playing and not playing elements
 				if(response.playing == true) {
@@ -79,21 +89,19 @@ $(document).ready(function() {
 });
 
 </script>
-<h1>Morlunk Mumble Radio Alpha</h1>
+<center>
+<img src="{{ STATIC_URL }}img/radio_banner.png"/><br><br>
 {% if not user.is_authenticated %}
 <a href="/account/login/"><i>Log into your Morlunk Co. account to queue and skip songs!</i></a><br><br>
 {% endif %}
-{% if user.is_staff %}
-<h3>Admin Controls</h3>
-<button onclick="startQueue()">Play</button><button onclick="stopQueue()">Stop</button><br><br>
-{% endif %}
 <span class="playing" {% if not playing %}style="display: none"{% endif %}>
-Currently Playing: <b><span id="currentlyPlaying"><a href="http://www.youtube.com/watch?v={{ queue.0.video_id }}">{{ queue.0.user_title }}</a></span></b> {% if user.is_authenticated %}<i><a href="javascript:void(0)" onclick="skip()"/>(skip)</a></i>{% endif %}<br>
+Currently Playing: <br><b><span id="currentlyPlaying"><a href="http://www.youtube.com/watch?v={{ queue.0.video_id }}">{{ queue.0.user_title }}</a></span></b> {% if user.is_authenticated %}<i><a href="javascript:void(0)" onclick="skip()"/>(skip)</a></i>{% endif %}<br>
 </span>
 <span class="notplaying" {% if playing %}style="display: none"{% endif %}>
 Nothing is playing. <u><a href="/radio/random/">Click to queue 5 previously played songs.</a></u><br><br>
 </span>
-<div class="controlpane">
+</center>
+<div class="centerpane radio">
 <h3>Queued Items</h3>
 <ol id="queue">
 	{% for item in queue %}
@@ -101,7 +109,7 @@ Nothing is playing. <u><a href="/radio/random/">Click to queue 5 previously play
 	{% endfor %}
 </ol>
 </div>
-<div class="controlpane">
+<div class="controlpane left">
 <h3>Recently Played</h3>
 <i>Click to add to queue</i>
 <ol id="recent">
@@ -111,13 +119,15 @@ Nothing is playing. <u><a href="/radio/random/">Click to queue 5 previously play
 	</li>
 	{% endfor %}
 </ol>
+{% if user.is_staff %}
+<h3>Admin Controls</h3>
+<button onclick="startQueue()">Play</button><button onclick="stopQueue()">Stop</button>
+{% endif %}
 </div>
-{% if user.is_authenticated %}
-<div class="controlpane">
+<div class="controlpane right">
 <h3>Add Item</h3>
 Youtube Video ID:<br>
 <input type="text" id="videoId" maxlength="20" style="width: 100%;"/><br><br>
 <button onclick="addToQueue()">Submit</button>
 </div>
-{% endif %}
 {% endblock %}

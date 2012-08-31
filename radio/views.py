@@ -33,7 +33,7 @@ def show_radio(request):
 def start_playing(request):
     radio = get_radio()
 
-    if request.user.is_staff() == False:
+    if request.user.is_staff is False:
         return HttpResponse(status=403);
 
     if radio.playing == False:
@@ -63,6 +63,10 @@ def skip_playing(request):
         return HttpResponse(simplejson.dumps({"result": "no_auth"}), mimetype="application/json");
 
     radio = get_radio()
+
+    espeak_notify = subprocess.Popen(["espeak", "\"Skipped by %(first_name)s %(last_name)s.\"" % {"first_name": request.user.first_name, "last_name": request.user.last_name}])
+    espeak_notify.wait()
+
     os.kill(radio.vlc_pid, signal.SIGTERM)
 
     return HttpResponse(simplejson.dumps({"result": "success"}), mimetype="application/json")
@@ -142,7 +146,11 @@ def status(request):
     queue_list = []
     for radio_item in queue:
         queue_list.append(model_to_dict(radio_item))
-    return HttpResponse(simplejson.dumps({"result": "success", "queue": queue_list, "playing": radio.playing}), mimetype="application/json")
+    recent = RadioItem.objects.filter(played=True).order_by('-queue_time')[:10]
+    recent_list = []
+    for radio_item in recent:
+        recent_list.append(model_to_dict(radio_item))
+    return HttpResponse(simplejson.dumps({"result": "success", "queue": queue_list, "recent": recent_list, "playing": radio.playing}), mimetype="application/json")
 
 def next_song():
     radio = get_radio()
@@ -167,7 +175,7 @@ class PlayThread(threading.Thread):
         radio = get_radio()
 
         # Play espeak synth voice
-        tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. This song was queued by %s %s.\"" % (self.radio_item.user_title, self.radio_item.queuer.first_name, self.radio_item.queuer.last_name)])
+        tts_process = subprocess.Popen(["espeak", u"\"Morlunk Radio is now playing %(song_name)s. This song was queued by %(first_name)s %(last_name)s.\"" % {"song_name": self.radio_item.user_title.encode("utf-8"), "first_name": self.radio_item.queuer.first_name, "last_name": self.radio_item.queuer.last_name}])
         tts_process.wait()
 
         self.vlc_process = subprocess.Popen(["cvlc", "--no-video", "--play-and-exit", "http://www.youtube.com/watch?v=%s" % self.radio_item.video_id]) # Add extra quotes

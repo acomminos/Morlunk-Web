@@ -1,0 +1,21 @@
+.controlpane.right {
+    position: absolute;
+    width: 250px;
+    right: 0px;
+    left: auto;
+}
+
+.controlpane.left {
+    position: absolute;
+    width: 250px;
+    left: 0px;
+    right: auto;
+}
+
+.centerpane.radio {
+    position: absolute;
+    min-width: 100px;
+    width: auto;
+    left: 300px;
+    right: 300px;
+}
