@@ -114,7 +114,7 @@ def queue_song(request):
     except KeyError:
         response = {"result": "invalid_request"}
     except Exception as e:
-        response = {"result": "error", "error": e}
+        response = {"result": "error"}
     return HttpResponse(simplejson.dumps(response))
 
 @login_required

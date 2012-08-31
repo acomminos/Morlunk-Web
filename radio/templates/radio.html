@@ -24,12 +24,11 @@ function addToQueue() {
 }
 
 function addIdToQueue(video_id) {
-	$.get('/radio/queue',
+	$.getJSON('/radio/queue',
 		{
 			'video_id': video_id
 		}
-	).success(function(data) {
-    	var response = jQuery.parseJSON(data);
+	).success(function(response) {
         if(response.result == "success") {
             $().toastmessage('showSuccessToast', "Success! Your song has been queued.");
         	$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+video_id+"\"></a>"+response.video_title+"</li>");
