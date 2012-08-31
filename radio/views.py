@@ -2,8 +2,10 @@ from datetime import datetime
 from radio.models import RadioItem, Radio
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
+from django.contrib.auth.decorators import login_required
 from django.forms.models import model_to_dict
 from django.template import RequestContext
+from django.contrib.auth.models import User
 import subprocess
 import simplejson
 import threading
@@ -30,6 +32,10 @@ def show_radio(request):
 
 def start_playing(request):
     radio = get_radio()
+
+    if request.user.is_staff() == False:
+        return HttpResponse(status=403);
+
     if radio.playing == False:
         radio.playing = True
         radio.save()
@@ -49,13 +55,17 @@ def stop_playing(request):
 
     os.kill(radio.vlc_pid, signal.SIGTERM)
 
-    return HttpResponse(simplejson.dumps({"result": "success"}))
+    return HttpResponse(simplejson.dumps({"result": "success"}), mimetype="application/json")
 
 def skip_playing(request):
+
+    if request.user.is_authenticated() is False:
+        return HttpResponse(simplejson.dumps({"result": "no_auth"}), mimetype="application/json");
+
     radio = get_radio()
     os.kill(radio.vlc_pid, signal.SIGTERM)
 
-    return HttpResponse(simplejson.dumps({"result": "success"}))
+    return HttpResponse(simplejson.dumps({"result": "success"}), mimetype="application/json")
 
 def get_video_data(video_id):
     """ Use YouTube Gdata API to get the YouTube entry."""
@@ -67,6 +77,10 @@ def get_video_data(video_id):
     return entry
 
 def queue_song(request):
+    
+    if request.user.is_authenticated() is False:
+        return HttpResponse(simplejson.dumps({"result": "no_auth"}), mimetype="application/json");
+
     radio = get_radio()
     try:
         video_id = request.REQUEST["video_id"]
@@ -77,11 +91,13 @@ def queue_song(request):
             entry = get_video_data(video_id)
 
             item = RadioItem(user_title=entry.media.title.text, video_id=video_id)
+            item.queuer = request.user
             item.save()
         else:
             item = matches.get()
             item.played = False
             item.queue_time = datetime.now()
+            item.queuer = request.user
             item.save()
 
         # Start playing if not already playing
@@ -97,6 +113,7 @@ def queue_song(request):
         response = {"result": "error", "error": e}
     return HttpResponse(simplejson.dumps(response))
 
+@login_required
 def queue_random(request, count=5):
     iterations = 0
     while iterations < count:
@@ -105,6 +122,7 @@ def queue_random(request, count=5):
         
         item = RadioItem.objects.all()[index]
         item.played = False
+        item.queuer = request.user
         item.save()
 
         iterations += 1
@@ -149,7 +167,7 @@ class PlayThread(threading.Thread):
         radio = get_radio()
 
         # Play espeak synth voice
-        tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. Shup and listen.\"" % self.radio_item.user_title])
+        tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. This song was queued by %s %s.\"" % (self.radio_item.user_title, self.radio_item.queuer.first_name, self.radio_item.queuer.last_name)])
         tts_process.wait()
 
         self.vlc_process = subprocess.Popen(["cvlc", "--no-video", "--play-and-exit", "http://www.youtube.com/watch?v=%s" % self.radio_item.video_id]) # Add extra quotes

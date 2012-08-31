@@ -34,6 +34,8 @@ function addIdToQueue(video_id) {
         	$("#videoId").val("");
         } else if(response.result == "invalid_request") {
             $().toastmessage('showWarningToast', "Invalid request! Try resubmitting.");
+        } else if(response.result == "no_auth") {
+            $().toastmessage('showWarningToast', "You must be logged in to queue a song!");
         } else {
             $().toastmessage('showErrorToast', "Server error! Song not added to queue.")
         }
@@ -77,14 +79,16 @@ $(document).ready(function() {
 });
 
 </script>
-
 <h1>Morlunk Mumble Radio Alpha</h1>
+{% if not user.is_authenticated %}
+<a href="/account/login/"><i>Log into your Morlunk Co. account to queue and skip songs!</i></a><br><br>
+{% endif %}
 {% if user.is_staff %}
 <h3>Admin Controls</h3>
 <button onclick="startQueue()">Play</button><button onclick="stopQueue()">Stop</button><br><br>
 {% endif %}
 <span class="playing" {% if not playing %}style="display: none"{% endif %}>
-Currently Playing: <b><span id="currentlyPlaying"><a href="http://www.youtube.com/watch?v={{ queue.0.video_id }}">{{ queue.0.user_title }}</a></span></b> <i><a href="javascript:void(0)" onclick="skip()"/>(skip)</a></i><br>
+Currently Playing: <b><span id="currentlyPlaying"><a href="http://www.youtube.com/watch?v={{ queue.0.video_id }}">{{ queue.0.user_title }}</a></span></b> {% if user.is_authenticated %}<i><a href="javascript:void(0)" onclick="skip()"/>(skip)</a></i>{% endif %}<br>
 </span>
 <span class="notplaying" {% if playing %}style="display: none"{% endif %}>
 Nothing is playing. <u><a href="/radio/random/">Click to queue 5 previously played songs.</a></u><br><br>
@@ -108,10 +112,12 @@ Nothing is playing. <u><a href="/radio/random/">Click to queue 5 previously play
 	{% endfor %}
 </ol>
 </div>
+{% if user.is_authenticated %}
 <div class="controlpane">
 <h3>Add Item</h3>
 Youtube Video ID:<br>
 <input type="text" id="videoId" maxlength="20" style="width: 100%;"/><br><br>
 <button onclick="addToQueue()">Submit</button>
 </div>
+{% endif %}
 {% endblock %}
