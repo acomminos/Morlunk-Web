@@ -2,6 +2,7 @@ from datetime import datetime
 from radio.models import RadioItem, Radio
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
+from django.forms.models import model_to_dict
 from django.template import RequestContext
 import subprocess
 import simplejson
@@ -117,6 +118,14 @@ def queue_random(request, count=5):
     
     return redirect("/radio/")
 
+def status(request):
+    radio = get_radio()
+    queue = RadioItem.objects.filter(played=False).order_by('queue_time')
+    queue_list = []
+    for radio_item in queue:
+        queue_list.append(model_to_dict(radio_item))
+    return HttpResponse(simplejson.dumps({"result": "success", "queue": queue_list, "playing": radio.playing}), mimetype="application/json")
+
 def next_song():
     radio = get_radio()
     if radio.playing == True:
@@ -140,7 +149,7 @@ class PlayThread(threading.Thread):
         radio = get_radio()
 
         # Play espeak synth voice
-        tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. You a stupid troll.\"" % self.radio_item.user_title])
+        tts_process = subprocess.Popen(["espeak", "\"Morlunk Radio is now playing %s. Shup and listen.\"" % self.radio_item.user_title])
         tts_process.wait()
 
         self.vlc_process = subprocess.Popen(["cvlc", "--no-video", "--play-and-exit", "http://www.youtube.com/watch?v=%s" % self.radio_item.video_id]) # Add extra quotes

@@ -2,6 +2,9 @@
 # static/
 settings.py
 
+# VIM
+*.swp
+
 # Python ignores
 *.py[co]
 

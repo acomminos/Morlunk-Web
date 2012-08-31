@@ -7,4 +7,5 @@ urlpatterns = patterns('radio.views',
         (r'^queue', 'queue_song'),
         (r'^random', 'queue_random'),
         (r'^skip', 'skip_playing'),
+        (r'^status', 'status'),
         )
