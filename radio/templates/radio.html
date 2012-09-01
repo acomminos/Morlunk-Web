@@ -52,7 +52,7 @@ function updateQueue() {
 					$("ol[id='queue'] li").remove(); // Clear list
 
 					$.each(response.queue, function(i, item) {
-	        			$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+item.video_id+"\">"+item.user_title+"</a></li>");
+	        			$("ol[id='queue']").append("<li><a href=\"http://www.youtube.com/watch?v="+item.video_id+"\">"+item.user_title+"</a><i> (queued by "+item.queuer.first_name+" "+item.queuer.last_name+")</i></li>");
 					});
 
 				//	$("ol[id='queue']").fadeIn(250);
@@ -104,7 +104,7 @@ Nothing is playing. <u><a href="/radio/random/">Click to queue 5 previously play
 <h3>Queued Items</h3>
 <ol id="queue">
 	{% for item in queue %}
-	<li><a href="http://www.youtube.com/watch?v={{ item.video_id }}">{{ item.user_title }}</a></li>
+	<li><a href="http://www.youtube.com/watch?v={{ item.video_id }}">{{ item.user_title }}</a> <i>(queued by {{ item.queuer.first_name }} {{ item.queuer.last_name }})</i></li>
 	{% endfor %}
 </ol>
 </div>

@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from radio.models import RadioItem, Radio
+from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
@@ -142,15 +144,20 @@ def queue_random(request, count=5):
 
 def status(request):
     radio = get_radio()
+    dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime) else None # Create handler for simplejson to skip date
     queue = RadioItem.objects.filter(played=False).order_by('queue_time')
     queue_list = []
     for radio_item in queue:
-        queue_list.append(model_to_dict(radio_item))
+        radio_item_dict = model_to_dict(radio_item)
+        radio_item_dict["queuer"] = model_to_dict(radio_item.queuer, fields=["first_name", "last_name"]) # Add queuer data to dictionary
+        queue_list.append(radio_item_dict)
     recent = RadioItem.objects.filter(played=True).order_by('-queue_time')[:10]
     recent_list = []
     for radio_item in recent:
-        recent_list.append(model_to_dict(radio_item))
-    return HttpResponse(simplejson.dumps({"result": "success", "queue": queue_list, "recent": recent_list, "playing": radio.playing}), mimetype="application/json")
+        radio_item_dict = model_to_dict(radio_item)
+        radio_item_dict["queuer"] = model_to_dict(radio_item.queuer, fields=["first_name", "last_name"]) # Add queuer data to dictionary
+        recent_list.append(radio_item_dict)
+    return HttpResponse(simplejson.dumps({"result": "success", "queue": queue_list, "recent": recent_list, "playing": radio.playing}, default=dthandler), mimetype="application/json")
 
 def next_song():
     radio = get_radio()
@@ -170,12 +177,13 @@ class PlayThread(threading.Thread):
         super(PlayThread, self).__init__()
         self.radio_item = radio_item
         self.callback = callback
-
+# -*- coding: utf-8 -*-
     def run(self):
         radio = get_radio()
 
         # Play espeak synth voice
-        tts_process = subprocess.Popen(["espeak", u"\"Morlunk Radio is now playing %(song_name)s. This song was queued by %(first_name)s %(last_name)s.\"" % {"song_name": self.radio_item.user_title.encode("utf-8"), "first_name": self.radio_item.queuer.first_name, "last_name": self.radio_item.queuer.last_name}])
+        # Ignore special unicode characters in song name.
+        tts_process = subprocess.Popen(["espeak", u'"Morlunk Radio is now playing %(song_name)s. This song was queued by %(first_name)s %(last_name)s."' % {"song_name": unicode(self.radio_item.user_title.encode('utf-8'), errors='ignore'), "first_name": self.radio_item.queuer.first_name, "last_name": self.radio_item.queuer.last_name}])
         tts_process.wait()
 
         self.vlc_process = subprocess.Popen(["cvlc", "--no-video", "--play-and-exit", "http://www.youtube.com/watch?v=%s" % self.radio_item.video_id]) # Add extra quotes
