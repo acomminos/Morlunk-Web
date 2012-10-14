@@ -5,7 +5,8 @@
         <title>Morlunk Co. - {% block title %}Page{% endblock %}</title>
         <link rel="stylesheet" href="{{ STATIC_URL }}css/stylesheet.css"/>
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" />
-	    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.7.1.min.js"></script>
+	    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.8.2.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.9.0.custom.min.js"></script>
         <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.toastmessage.css"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.toastmessage.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/morlunk_common.js"></script>
@@ -13,21 +14,32 @@
         <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
     </head>
     <body>
-        <div id="navbar">
-            <div id="navtitle"></div>
+        <div id="content">
+        <div id="titlepanel">
+            <div id="titleband"></div>
+            <div id="titleimage"></div>
+            <div class="linkbar left">
+                <a class="navitem" href="/">blog</a>
+                <a class="navitem" href="/page/games/">games</a>
+                <a class="navitem" href="/page/apps/">apps</a>
+            </div>
+            <div class="linkbar right">
+                <a class="navitem" href="/account/">account</a>
+                {% if user.is_staff %}<a class="navitem" href="/admin/">admin</a>{% endif %}
+                {% if user.is_authenticated %}<a class="navitem" href="/account/logout/">logout</a>{% endif %}
+            </div>
+
+            <!--
             <div id="navitembox">
             <img src="{{ STATIC_URL }}img/separator.png"/>
-            <a class="navitem" href="/">blog</a><img src="{{ STATIC_URL }}img/separator.png"/>
-            <a class="navitem" href="/page/games/">games</a><img src="{{ STATIC_URL }}img/separator.png"/>
-            <a class="navitem" href="/page/apps/">apps</a><img src="{{ STATIC_URL }}img/separator.png"/>
-            <a class="navitem" href="/account/">account</a>
-            {% if user.is_staff %}<img src="{{ STATIC_URL }}img/separator.png"/><a class="navitem" href="/admin/">admin</a><img src="{{ STATIC_URL }}img/separator.png"/>{% endif %}
-            {% if user.is_authenticated %}<a class="navitem" href="/account/logout/">logout</a>{% endif %}
-            </div>
+                       <a class="navitem" href="/account/">account</a>
+                        </div>
+            -->
         </div>
-        <div id="content">
+        <div class="centerpane">
             {% block content %}
                 There's no content here!
             {% endblock %}
+        </div>
         </div>
     </body>

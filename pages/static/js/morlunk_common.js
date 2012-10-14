@@ -18,6 +18,13 @@ $(document).ready(function() {
 		})
 	});
 */
+
+    $(".navitem").hover(function() {
+        $(this).animate({'background-color': '#FFFFFFF'}, 'fast');
+    }, function() {
+        $(this).stop();
+        $(this).animate({'background-color': 'transparent'}, 'fast');
+    });
 });
 
 function buyItem(identifier) {
